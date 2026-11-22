@@ -11,12 +11,16 @@
 
 **A premium, offline terminal for planning trades the way professionals do: risk first, size second.**
 
+**Repository:** [hamiidza/risk-terminal](https://github.com/hamiidza/risk-terminal) ·
+[Issues](https://github.com/hamiidza/risk-terminal/issues) ·
+[License (MIT)](LICENSE)
+
 [Quick start](#quick-start) ·
 [Screenshots](#screenshots) ·
 [Features](#features) ·
 [How it works](#how-the-numbers-work) ·
 [Limitations](#limitations) ·
-[فارسی](#خلاصه-فارسی)
+[فارسی](README.fa.md)
 
 </div>
 
@@ -107,11 +111,13 @@ It is one HTML file. No server, no account, no API keys, no network calls.
 Open  index.html  in any modern browser.
 ```
 
+> **Live demo:** none published yet. Run the app locally by opening `index.html`, or publish it with GitHub Pages as described below.
+
 **Develop**
 
 ```bash
-git clone <your-repo-url>
-cd risk-reward-terminal
+git clone https://github.com/hamiidza/risk-terminal.git
+cd risk-terminal
 
 npm install        # only needed for the UI smoke test (jsdom)
 npm run build      # inlines src/* into index.html
@@ -122,9 +128,9 @@ npm run test:all
 
 **Publish with GitHub Pages**
 
-1. Push the repository to GitHub.
+1. The repository is published at [hamiidza/risk-terminal](https://github.com/hamiidza/risk-terminal).
 2. *Settings → Pages → Build and deployment → Deploy from a branch → `main` / root.*
-3. Your terminal is live at `https://<user>.github.io/<repo>/` (`index.html` is already at the root).
+3. GitHub Pages is **not enabled yet**, so no demo URL is linked here. Once deployment finishes, the live URL appears in the repository's About section (`index.html` is already at the root).
 
 ---
 
@@ -236,6 +242,8 @@ Issues and pull requests are welcome. Please keep the engine free of DOM code, a
 - برنامه‌ریز معاملات، شبیه‌ساز مونت‌کارلو (با seed)، ژورنال قابل‌ویرایش و خروجی CSV دارد.
 - رابط فارسی راست‌به‌چپ و انگلیسی، تم تیره و روشن.
 - هیچ اتصالی به صرافی ندارد و داده‌ها فقط در مرورگر شما می‌مانند.
+
+**مستندات کامل فارسی:** [README.fa.md](README.fa.md)
 
 **اجرا:** فایل `index.html` را در مرورگر باز کنید.
 

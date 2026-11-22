@@ -6,6 +6,10 @@
 
 **ترمینالی حرفهای و آفلاین برای برنامهريزی معاملات: ابتدا ریسک، سپس حجم پوزیشن.**
 
+**مخزن:** [hamiidza/risk-terminal](https://github.com/hamiidza/risk-terminal) ·
+[Issues](https://github.com/hamiidza/risk-terminal/issues) ·
+[مجوز (MIT)](LICENSE)
+
 [شروع سریع](#شروع-سریع) · [تصاویر](#تصاویر) · [امکانات](#امکانات) · [نحوه محاسبه اعداد](#نحوه-محاسبه-اعداد) · [محدودیتها](#محدودیتها) · [English](README.md)
 
 </div>
@@ -37,6 +41,8 @@
 فایل index.html را در هر مرورگر مدرنی باز کنید.
 ```
 
+> **نسخهٔ آنلاین:** هنوز منتشر نشده است. برنامه را بهصورت محلی با باز کردن `index.html` اجرا کنید یا GitHub Pages را مطابق توضیحات زیر فعال کنید.
+
 **توسعه**
 
 ```bash
@@ -52,7 +58,7 @@ npm run test:all
 
 **انتشار با GitHub Pages**
 
-پس ازpush به GitHub: *Settings → Pages → Build and deployment → Deploy from a branch → `main` / root* و سپس آدرس `https://<user>.github.io/risk-terminal/` در دسترس خواهد بود.
+مخزن در [hamiidza/risk-terminal](https://github.com/hamiidza/risk-terminal) منتشر شده است. GitHub Pages هنوز فعال نشده، بنابراین لینک دموی آنلاینی درج نشده است. برای انتشار: *Settings → Pages → Build and deployment → Deploy from a branch → `main` / root*. پس از اتمام استقرار، آدرس سایت در بخش About مخزن نمایش داده میشود (`index.html` در ریشه قرار دارد).
 
 ---
 
