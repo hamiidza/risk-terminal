@@ -1,0 +1,14 @@
+{
+  "name": "risk-reward-terminal",
+  "version": "1.0.0",
+  "description": "Offline risk & reward management terminal for manual crypto-futures trade planning (position sizing, fees, funding, Monte Carlo, journal).",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test": "node tests/engine.test.js",
+    "test:ui": "npm run build && node tests/ui.smoke.test.js",
+    "test:all": "npm test && npm run test:ui"
+  },
+  "devDependencies": { "jsdom": "^26.0.0" }
+}

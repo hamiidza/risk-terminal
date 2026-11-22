@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="470" viewBox="0 0 1280 470" role="img" aria-labelledby="t d">
+  <title id="t">Architecture</title>
+  <desc id="d">Source files are inlined by scripts/build.js into index.html. The UI layer calls the pure engine; settings, journal and planner persist in localStorage.</desc>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#6366f1"/></linearGradient>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8b98ad"/></marker>
+  </defs>
+  <rect width="1280" height="470" rx="22" fill="#0b1018"/>
+  <g font-family="Segoe UI,Helvetica,Arial,sans-serif">
+    <!-- sources -->
+    <rect x="32" y="40" width="250" height="390" rx="16" fill="#111827" stroke="#94a3b8" stroke-opacity=".25"/>
+    <text x="52" y="72" font-size="16" font-weight="700" fill="#e8edf5">src/</text>
+    <g font-size="13.5" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#c7d0de">
+      <text x="52" y="108">engine.js</text><text x="52" y="136">app1.js   state, charts</text><text x="52" y="164">app2.js   tab renderers</text><text x="52" y="192">app3.js   events, init</text>
+      <text x="52" y="220">i18n.js   fa / en</text><text x="52" y="248">style.css</text><text x="52" y="276">template.html</text>
+    </g>
+    <text x="52" y="330" font-size="13" fill="#8b98ad">scripts/build.js inlines</text>
+    <text x="52" y="350" font-size="13" fill="#8b98ad">everything: no bundler,</text>
+    <text x="52" y="370" font-size="13" fill="#8b98ad">no network, no runtime deps.</text>
+
+    <path d="M286 235H352" stroke="#8b98ad" stroke-width="2" marker-end="url(#a)"/>
+    <text x="319" y="224" text-anchor="middle" font-size="12" fill="#8b98ad">build</text>
+
+    <!-- index.html -->
+    <rect x="356" y="40" width="590" height="390" rx="16" fill="#0f1520" stroke="url(#g)" stroke-width="2"/>
+    <text x="378" y="72" font-size="16" font-weight="700" fill="#e8edf5">index.html (single offline file)</text>
+
+    <rect x="378" y="92" width="546" height="104" rx="12" fill="#151d2b" stroke="#94a3b8" stroke-opacity=".2"/>
+    <text x="398" y="120" font-size="15" font-weight="700" fill="#2dd4bf">UI layer</text>
+    <text x="398" y="146" font-size="13" fill="#c7d0de">Overview, Calculator, Planner, Simulator, Analytics, Journal, Settings</text>
+    <text x="398" y="168" font-size="13" fill="#8b98ad">Targeted re-render: inputs keep focus while you type.</text>
+    <text x="398" y="186" font-size="13" fill="#8b98ad">Inline SVG charts with tooltips, no chart library.</text>
+
+    <path d="M651 200V228" stroke="#8b98ad" stroke-width="2" marker-end="url(#a)"/>
+    <text x="662" y="219" font-size="12" fill="#8b98ad">pure function calls</text>
+
+    <rect x="378" y="232" width="546" height="116" rx="12" fill="#151d2b" stroke="#94a3b8" stroke-opacity=".2"/>
+    <text x="398" y="260" font-size="15" font-weight="700" fill="#818cf8">Calculation engine (no DOM)</text>
+    <g font-size="12.5" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#c7d0de">
+      <text x="398" y="286">computePosition  runPlan  monteCarlo</text>
+      <text x="398" y="306">analyze  theoretical  growthProjection</text>
+      <text x="398" y="326">checkGuards  fundingFraction  toCSV</text>
+    </g>
+
+    <rect x="378" y="362" width="546" height="52" rx="12" fill="#151d2b" stroke="#94a3b8" stroke-opacity=".2"/>
+    <text x="398" y="384" font-size="15" font-weight="700" fill="#fbbf24">localStorage</text>
+    <text x="398" y="402" font-size="13" fill="#8b98ad">settings, journal and planner stay in your browser only.</text>
+    <path d="M651 352V360" stroke="#8b98ad" stroke-width="2" marker-end="url(#a)"/>
+
+    <!-- tests -->
+    <path d="M950 235H1016" stroke="#8b98ad" stroke-width="2" marker-end="url(#a)"/>
+    <text x="983" y="224" text-anchor="middle" font-size="12" fill="#8b98ad">verified by</text>
+    <rect x="1020" y="40" width="228" height="390" rx="16" fill="#111827" stroke="#94a3b8" stroke-opacity=".25"/>
+    <text x="1040" y="72" font-size="16" font-weight="700" fill="#e8edf5">tests/</text>
+    <text x="1040" y="108" font-size="13.5" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#c7d0de">engine.test.js</text>
+    <text x="1040" y="130" font-size="13" fill="#8b98ad">31 unit tests of the engine</text>
+    <text x="1040" y="170" font-size="13.5" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#c7d0de">ui.smoke.test.js</text>
+    <text x="1040" y="192" font-size="13" fill="#8b98ad">41 checks in jsdom: every tab,</text>
+    <text x="1040" y="210" font-size="13" fill="#8b98ad">UI numbers vs engine, journal,</text>
+    <text x="1040" y="228" font-size="13" fill="#8b98ad">RTL/EN toggle, zero JS errors.</text>
+  </g>
+</svg>

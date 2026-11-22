@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="340" viewBox="0 0 1280 340" role="img" aria-labelledby="t d">
+  <title id="t">Risk &amp; Reward Terminal</title>
+  <desc id="d">Banner: product name, tagline and an illustrative Monte Carlo fan chart.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#070a10"/><stop offset="1" stop-color="#111a38"/></linearGradient>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#6366f1"/></linearGradient>
+    <radialGradient id="g1" cx=".12" cy=".05" r=".6"><stop offset="0" stop-color="#2dd4bf" stop-opacity=".28"/><stop offset="1" stop-color="#2dd4bf" stop-opacity="0"/></radialGradient>
+    <radialGradient id="g2" cx=".95" cy=".95" r=".6"><stop offset="0" stop-color="#6366f1" stop-opacity=".35"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></radialGradient>
+    <linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2dd4bf" stop-opacity=".35"/><stop offset="1" stop-color="#2dd4bf" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect width="1280" height="340" rx="22" fill="url(#bg)"/>
+  <rect width="1280" height="340" rx="22" fill="url(#g1)"/>
+  <rect width="1280" height="340" rx="22" fill="url(#g2)"/>
+  <rect x=".5" y=".5" width="1279" height="339" rx="21.5" fill="none" stroke="#94a3b8" stroke-opacity=".2"/>
+
+  <!-- illustrative fan chart (decorative) -->
+  <g transform="translate(700 40)">
+    <g stroke="#94a3b8" stroke-opacity=".16" stroke-dasharray="2 5">
+      <line x1="0" y1="50" x2="520" y2="50"/><line x1="0" y1="110" x2="520" y2="110"/><line x1="0" y1="170" x2="520" y2="170"/><line x1="0" y1="230" x2="520" y2="230"/>
+    </g>
+    <path d="M0 150 L80 142 L160 128 L240 112 L320 92 L400 70 L520 40 L520 215 L400 190 L320 176 L240 168 L160 160 L80 155 L0 150Z" fill="#6366f1" fill-opacity=".14"/>
+    <path d="M0 150 L80 147 L160 140 L240 130 L320 118 L400 104 L520 88 L520 160 L400 154 L320 150 L240 150 L160 152 L80 152 L0 150Z" fill="#6366f1" fill-opacity=".26"/>
+    <path d="M0 150 L80 148 L160 144 L240 138 L320 130 L400 120 L520 108 L520 250 L0 250Z" fill="url(#area)" fill-opacity=".55"/>
+    <path d="M0 150 L80 148 L160 144 L240 138 L320 130 L400 120 L520 108" fill="none" stroke="#2dd4bf" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M0 232 L520 232" stroke="#fb7185" stroke-width="1.5" stroke-dasharray="6 5"/>
+    <text x="518" y="226" text-anchor="end" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="12" fill="#fb7185">drawdown floor</text>
+    <text x="0" y="266" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8b98ad">illustrative Monte Carlo fan chart (P5-P95, P25-P75, median)</text>
+  </g>
+
+  <!-- brand -->
+  <g transform="translate(64 62)">
+    <rect width="68" height="68" rx="17" fill="url(#g)"/>
+    <path d="M14 46l12-13 9 9 20-22" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M43 18h12v12" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="64" y="188" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="50" font-weight="800" fill="#e8edf5">Risk &amp; Reward</text>
+  <text x="64" y="238" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="50" font-weight="800" fill="url(#g)">Management Terminal</text>
+  <text x="66" y="276" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="19" fill="#8b98ad">Manual futures trade planning. Offline, no API keys.</text>
+
+  <g font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#e8edf5">
+    <rect x="64" y="294" width="118" height="28" rx="14" fill="#fff" fill-opacity=".07" stroke="#94a3b8" stroke-opacity=".3"/><text x="123" y="313" text-anchor="middle">Long / Short</text>
+    <rect x="192" y="294" width="132" height="28" rx="14" fill="#fff" fill-opacity=".07" stroke="#94a3b8" stroke-opacity=".3"/><text x="258" y="313" text-anchor="middle">Isolated margin</text>
+    <rect x="334" y="294" width="124" height="28" rx="14" fill="#fff" fill-opacity=".07" stroke="#94a3b8" stroke-opacity=".3"/><text x="396" y="313" text-anchor="middle">Monte Carlo</text>
+    <rect x="468" y="294" width="148" height="28" rx="14" fill="#fff" fill-opacity=".07" stroke="#94a3b8" stroke-opacity=".3"/><text x="542" y="313" text-anchor="middle">Persian RTL + EN</text>
+  </g>
+</svg>

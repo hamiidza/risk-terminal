@@ -1,0 +1,1353 @@
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Risk &amp; Reward Terminal</title>
+<style>:root{
+  --bg:#070a10;--bg2:#0b1018;--p:#0f1520;--p2:#151d2b;--p3:#1b2536;--b:rgba(148,163,184,.14);--b2:rgba(148,163,184,.26);
+  --t:#e8edf5;--m:#8b98ad;--ac:#2dd4bf;--ac2:#6366f1;--g:#34d399;--r:#fb7185;--a:#fbbf24;--bl:#818cf8;
+  --grad:linear-gradient(135deg,#2dd4bf 0%,#6366f1 100%);--on-ac:#03120f;--rad:14px;--sh:0 1px 0 rgba(255,255,255,.04) inset,0 10px 30px -14px rgba(0,0,0,.7);
+  --mono:ui-monospace,"SF Mono","Cascadia Mono","JetBrains Mono",Consolas,monospace;color-scheme:dark}
+[data-theme=light]{
+  --bg:#eef1f7;--bg2:#e6eaf2;--p:#ffffff;--p2:#f3f5fa;--p3:#e9edf5;--b:rgba(15,23,42,.1);--b2:rgba(15,23,42,.2);
+  --t:#0f172a;--m:#56627a;--ac:#0d9488;--ac2:#4f46e5;--g:#059669;--r:#e11d48;--a:#b45309;--bl:#4f46e5;
+  --on-ac:#ffffff;--sh:0 1px 2px rgba(15,23,42,.06),0 12px 28px -16px rgba(15,23,42,.25);color-scheme:light}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;color:var(--t);font:14px/1.6 system-ui,"Segoe UI",Tahoma,"Noto Sans Arabic",Arial,sans-serif;
+  background:radial-gradient(900px 480px at 85% -10%,rgba(99,102,241,.16),transparent 60%),radial-gradient(800px 420px at -5% 5%,rgba(45,212,191,.12),transparent 60%),var(--bg);background-attachment:fixed}
+button{font:inherit}
+.shell{display:grid;grid-template-columns:252px minmax(0,1fr);min-height:100vh}
+/* sidebar */
+.side{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:18px;padding:20px 14px;border-inline-end:1px solid var(--b);background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),var(--bg2)}
+.logo{display:flex;align-items:center;gap:11px;padding:0 6px}
+.logo svg{width:42px;height:42px;flex:0 0 auto;filter:drop-shadow(0 6px 14px rgba(99,102,241,.45))}
+.brand{display:flex;flex-direction:column;min-width:0}.brand b{font-size:14.5px;line-height:1.35}.brand span{color:var(--m);font-size:11px;direction:ltr;text-align:start;unicode-bidi:plaintext}
+#nav{display:flex;flex-direction:column;gap:3px;flex:1}
+#nav button{display:flex;align-items:center;gap:11px;padding:10px 12px;border:0;border-radius:11px;background:transparent;color:var(--m);cursor:pointer;text-align:start;position:relative;transition:background .15s,color .15s}
+#nav button svg{width:19px;height:19px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#nav button:hover{background:var(--p2);color:var(--t)}
+#nav button.on{background:linear-gradient(90deg,rgba(45,212,191,.16),rgba(99,102,241,.1));color:var(--t);font-weight:600;box-shadow:0 0 0 1px var(--b) inset}
+#nav button.on::before{content:"";position:absolute;inset-block:9px;inset-inline-start:-14px;width:3px;border-radius:3px;background:var(--grad)}
+#nav button.on svg{stroke:var(--ac)}
+.tools{display:flex;gap:8px}
+.tools button{flex:1;padding:8px 10px;border-radius:10px;border:1px solid var(--b);background:var(--p2);color:var(--t);cursor:pointer;transition:border-color .15s}
+.tools button:hover{border-color:var(--ac)}
+.wrap{min-width:0;padding:18px 22px 48px;max-width:1360px;width:100%}
+.banner{padding:10px 14px;border:1px solid color-mix(in srgb,var(--a) 45%,transparent);border-radius:12px;background:color-mix(in srgb,var(--a) 8%,transparent);font-size:12.5px;margin-bottom:16px;color:var(--t)}
+main section{animation:rise .28s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* controls */
+.btn{padding:9px 15px;border-radius:10px;border:1px solid var(--b2);background:var(--p2);color:var(--t);cursor:pointer;transition:transform .12s,border-color .15s,box-shadow .15s}
+.btn:hover:not(:disabled){border-color:var(--ac);transform:translateY(-1px)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.pri{background:var(--grad);border-color:transparent;color:#fff;font-weight:650;box-shadow:0 8px 20px -10px rgba(99,102,241,.8)}
+.btn.danger{color:var(--r)}.btn.sm{padding:2px 9px}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+input,select{width:100%;padding:9px 11px;background:var(--p2);color:var(--t);border:1px solid var(--b);border-radius:10px;font:inherit;min-width:0;transition:border-color .15s,box-shadow .15s}
+input:hover,select:hover{border-color:var(--b2)}
+input:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 22%,transparent);outline:none}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--ac)}
+.f{display:flex;flex-direction:column;gap:5px;margin:0 0 11px}.f>span{color:var(--m);font-size:12.5px}
+.f.chk{flex-direction:row;align-items:center;gap:9px}.f.chk>span{color:var(--t)}
+.lbl{color:var(--m);font-size:12px;margin:8px 0 5px;text-transform:uppercase;letter-spacing:.04em}
+.seg{display:flex;padding:3px;gap:3px;border:1px solid var(--b);border-radius:12px;background:var(--p2);margin:0 0 11px}
+.seg button{flex:1;padding:7px 8px;background:transparent;color:var(--m);border:0;border-radius:9px;cursor:pointer;transition:all .15s}
+.seg button.on{background:var(--grad);color:#fff;font-weight:650;box-shadow:0 4px 12px -6px rgba(99,102,241,.9)}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+/* cards */
+.card{background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01)),var(--p);border:1px solid var(--b);border-radius:var(--rad);padding:16px;margin-bottom:14px;min-width:0;box-shadow:var(--sh)}
+.card.ok{border-color:color-mix(in srgb,var(--g) 50%,var(--b))}.card.bad{border-color:var(--r)}
+.card h2{margin:0 0 12px;font-size:14px;font-weight:650;display:flex;gap:8px;align-items:center;flex-wrap:wrap;letter-spacing:.01em}
+.card h2:not(:first-child){margin-top:18px}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+#tab-calc>.cols{grid-template-columns:minmax(270px,350px) minmax(0,1fr)}
+#tab-calc .cols .cols{grid-template-columns:1fr 1fr}
+.cols3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:start}
+.row2,.row3,.row4{display:grid;gap:10px}.row2{grid-template-columns:1fr 1fr}.row3{grid-template-columns:repeat(3,1fr)}.row4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:14px}
+.kpis.sm{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:6px}
+.kpi{position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01)),var(--p);border:1px solid var(--b);border-radius:var(--rad);padding:13px 14px;min-width:0;box-shadow:var(--sh);transition:transform .15s,border-color .15s}
+.kpi::before{content:"";position:absolute;inset-inline:0;top:0;height:2px;background:var(--grad);opacity:.75}
+.kpi:hover{transform:translateY(-2px);border-color:var(--b2)}
+.kl{color:var(--m);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em}
+.kv{font-size:21px;font-weight:700;display:flex;flex-direction:column;margin-top:3px}
+.kv .n{font-family:var(--mono);letter-spacing:-.02em}
+.ks{color:var(--m);font-size:12px;margin-top:3px}
+.loc{font-size:11.5px;font-weight:400;color:var(--m);font-family:system-ui}
+.n{direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.kv .n,.ks .n{display:block;text-align:start}
+.pos{color:var(--g)}.neg{color:var(--r)}.muted{color:var(--m);font-size:12.5px}
+.est{font-size:10.5px;color:var(--a);border:1px solid color-mix(in srgb,var(--a) 60%,transparent);border-radius:20px;padding:0 9px;letter-spacing:.06em}
+.badge{display:inline-block;padding:1px 10px;border-radius:20px;font-size:11.5px;font-weight:650;border:1px solid var(--b)}
+.b-ok,.r-win{color:var(--g);border-color:color-mix(in srgb,var(--g) 55%,transparent);background:color-mix(in srgb,var(--g) 10%,transparent)}
+.b-adjusted,.r-be{color:var(--a);border-color:color-mix(in srgb,var(--a) 55%,transparent);background:color-mix(in srgb,var(--a) 10%,transparent)}
+.b-blocked,.r-loss{color:var(--r);border-color:color-mix(in srgb,var(--r) 55%,transparent);background:color-mix(in srgb,var(--r) 10%,transparent)}
+.r-open{color:var(--bl);border-color:color-mix(in srgb,var(--bl) 55%,transparent);background:color-mix(in srgb,var(--bl) 10%,transparent)}
+.note{padding:9px 13px;border:1px solid var(--b);border-radius:12px;background:var(--p2);color:var(--m);font-size:12.5px;margin-bottom:14px}
+.msgs{list-style:none;margin:6px 0;padding:0;display:flex;flex-direction:column;gap:5px}
+.msgs li{padding:7px 11px;border-radius:10px;font-size:13px;border:1px solid var(--b)}
+.msgs .err{border-color:color-mix(in srgb,var(--r) 60%,transparent);background:color-mix(in srgb,var(--r) 11%,transparent)}
+.msgs .err::before{content:"✕ ";color:var(--r);font-weight:700}
+.msgs .warn{border-color:color-mix(in srgb,var(--a) 60%,transparent);background:color-mix(in srgb,var(--a) 10%,transparent)}
+.msgs .warn::before{content:"▲ ";color:var(--a)}
+.msgs .ok{border-color:color-mix(in srgb,var(--g) 60%,transparent);background:color-mix(in srgb,var(--g) 9%,transparent)}
+.msgs .ok::before{content:"✓ ";color:var(--g);font-weight:700}
+/* tables */
+.tw{overflow-x:auto}.tw.tall{max-height:560px;overflow-y:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl caption{text-align:start;color:var(--m);font-size:12px;padding-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.tbl th,.tbl td{padding:7px 9px;border-bottom:1px solid var(--b);text-align:start;vertical-align:middle;white-space:nowrap}
+.tbl tbody tr:hover{background:rgba(148,163,184,.06)}
+.tbl th[scope=row]{font-weight:500;color:var(--m);white-space:normal}
+.tbl td.n{text-align:end}
+.tbl thead th{position:sticky;top:0;background:var(--p);font-size:11.5px;color:var(--m);z-index:1;text-transform:uppercase;letter-spacing:.04em}
+.tbl tr.sum th,.tbl tr.sum td{border-top:1px solid var(--b2);font-weight:650;background:rgba(148,163,184,.05)}
+.tbl td input,.tbl td select{padding:4px 7px;min-width:84px;font-size:12.5px;border-radius:8px}
+.plan td input{min-width:92px}.jt td input[type=text]{min-width:140px}.jt td input[type=date]{min-width:128px}
+tr.r-halted,tr.r-invalid,tr.r-paused{opacity:.55}tr.r-skip{opacity:.45}
+tr.r-executed td:first-child{box-shadow:inset 3px 0 0 var(--ac)}
+/* risk bar, meter */
+.rbar{display:flex;height:34px;border-radius:11px;overflow:hidden;margin:6px 0 14px;font-size:12px;font-weight:700;color:#fff;box-shadow:0 8px 22px -14px rgba(0,0,0,.8)}
+.rbar span{display:flex;align-items:center;justify-content:center;min-width:2px;overflow:hidden;white-space:nowrap;font-family:var(--mono)}
+.rl{background:linear-gradient(90deg,#e11d48,#fb7185)}.rw{background:linear-gradient(90deg,#10b981,#34d399);color:#04201a}
+.meter{height:7px;background:var(--p3);border-radius:7px;overflow:hidden;margin:6px 0}.meter i{display:block;height:100%;background:var(--grad);border-radius:7px}.meter i.hi{background:linear-gradient(90deg,#f59e0b,#fb7185)}
+/* charts */
+.chart{position:relative;direction:ltr}.chart svg{width:100%;height:auto;display:block}
+.gl{stroke:var(--b);stroke-width:1;stroke-dasharray:2 4}.ax{fill:var(--m);font-size:10.5px;font-family:var(--mono)}.cross{stroke:var(--m);stroke-width:1;stroke-dasharray:3 3}
+.chart path[fill=none]{filter:drop-shadow(0 3px 6px rgba(45,212,191,.25))}
+.tipbox{position:absolute;pointer-events:none;background:var(--p3);border:1px solid var(--b2);border-radius:9px;padding:6px 10px;font-size:12px;white-space:nowrap;direction:ltr;z-index:2;box-shadow:var(--sh)}
+.tipbox i,.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-inline-end:6px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:12px;color:var(--m)}
+.empty{padding:22px;text-align:center;color:var(--m)}
+.tip-i{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;margin-inline-start:6px;border:1px solid var(--m);border-radius:50%;font-size:10px;font-style:normal;color:var(--m);cursor:help}
+#toast{position:fixed;bottom:20px;inset-inline:0;margin:auto;width:max-content;max-width:90vw;background:var(--p3);border:1px solid var(--ac);padding:9px 18px;border-radius:12px;opacity:0;transition:opacity .2s;pointer-events:none;box-shadow:var(--sh)}
+#toast.show{opacity:1}
+/* responsive */
+@media (max-width:980px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .side{position:sticky;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-inline-end:0;border-bottom:1px solid var(--b);z-index:5;backdrop-filter:blur(10px)}
+  .logo svg{width:34px;height:34px}.tools{margin-inline-start:auto}.tools button{flex:none}
+  #nav{order:3;flex:1 0 100%;flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:2px;scrollbar-width:none}
+  #nav button{flex:0 0 auto;padding:8px 12px}#nav button.on::before{display:none}
+  .wrap{padding:14px 12px 40px}
+  .cols,#tab-calc>.cols,.cols3,#tab-calc .cols .cols{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:520px){.row3{grid-template-columns:1fr}.kv{font-size:18px}.brand span{display:none}#nav button span{font-size:12.5px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{.side,.btns,.banner{display:none}.shell{display:block}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="logo">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs><rect width="48" height="48" rx="12" fill="url(#lg)"/><path d="M10 31l8-9 6 6 14-15" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M30 13h8v8" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="brand"><b id="ttl"></b><span id="sub"></span></div>
+    </div>
+    <nav id="nav" role="tablist"></nav>
+    <div class="tools"><button id="bLang" type="button"></button><button id="bTheme" type="button"></button></div>
+  </aside>
+  <div class="wrap">
+    <div id="banner" class="banner" role="note"></div>
+    <main id="main"></main>
+  </div>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>/* engine.js — Pro Risk & Reward calculation engine (pure functions, no DOM).
+ * All percent-type inputs are in PERCENT units (1 = 1%). All results are ESTIMATES,
+ * not actual exchange execution. */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.RRE = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  /* ---------- editable defaults (fees/funding/specs are PLACEHOLDERS, verify on exchange) ---------- */
+  var DEFAULTS = {
+    exchange: 'LBank', pair: 'BTC/USDT', marginMode: 'isolated',
+    initialEquity: 45,
+    fxRate: 12000000 / 45, fxUnit: 'toman', fxStamp: '',
+    entryPrice: 100000,
+    maxLeverage: 3, leverage: 3,
+    riskPct: 1, maxDrawdownPct: 15,
+    rr: 3, stopPct: 1, targetPct: 3,
+    planTrades: 30, maxDailyTrades: 2, maxDailyLossPct: 2, maxConsecLosses: 0,
+    makerFeePct: 0.02, takerFeePct: 0.06, slippagePct: 0.02,
+    entryType: 'taker', tpType: 'maker', slType: 'taker',
+    fundingRatePct: 0.01, fundingIntervalH: 8, holdHours: 8,
+    qtyStep: 0.0001, minQty: 0.0001, minNotional: 0,
+    mmrPct: 0.5,
+    costsInRisk: true, capMode: 'cap',
+    winRatePct: 35, mcPaths: 2000, seed: 12345, compoundMode: 'compound'
+  };
+
+  /* ---------- helpers ---------- */
+  function num(x) {
+    var v = typeof x === 'string' ? parseFloat(x) : x;
+    return (typeof v === 'number' && isFinite(v)) ? v : NaN;
+  }
+  function nz(x) { var v = num(x); return isNaN(v) ? 0 : v; }
+  function stepDecimals(step) {
+    if (!(step > 0)) return 8;
+    var d = 0, x = step;
+    while (d < 12 && Math.abs(Math.round(x) - x) > 1e-9) { x *= 10; d++; }
+    return d;
+  }
+  /* round DOWN to the permitted step (never up) */
+  function floorTo(x, step) {
+    if (!(x > 0) || !(step > 0)) return 0;
+    var n = Math.floor(x / step * (1 + 1e-12) + 1e-12);
+    return Number((n * step).toFixed(stepDecimals(step)));
+  }
+  function mulberry32(seed) {
+    var a = (seed >>> 0) || 1;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      var t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function percentile(sorted, q) {
+    var n = sorted.length;
+    if (!n) return NaN;
+    if (n === 1) return sorted[0];
+    var pos = (n - 1) * q, lo = Math.floor(pos), hi = Math.ceil(pos);
+    return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
+  }
+  function toLocal(usd, rate) { return usd * rate; }
+  function fromLocal(local, rate) { return rate > 0 ? local / rate : NaN; }
+
+  /* ---------- funding estimate ----------
+   * cost as a FRACTION of notional; positive = paid, negative = received.
+   * Long pays when rate > 0, short receives (and vice-versa). Expected value over hold time. */
+  function fundingFraction(side, ratePct, holdHours, intervalH) {
+    var dir = side === 'short' ? -1 : 1;
+    var periods = intervalH > 0 ? holdHours / intervalH : 0;
+    return dir * (ratePct / 100) * periods;
+  }
+
+  /* ---------- core: position calculator ---------- */
+  function invalid(errors, side) {
+    return {
+      ok: false, status: 'blocked', errors: errors, warnings: [], side: side,
+      qty: 0, notional: 0, margin: 0, netLoss: 0, netWin: 0, grossRisk: 0, grossReward: 0,
+      riskBudget: 0, isEstimate: true
+    };
+  }
+
+  function computePosition(p) {
+    var Er = [], W = [];
+    var side = p.side === 'short' ? 'short' : 'long';
+    var dir = side === 'long' ? 1 : -1;
+    var E = num(p.equity), P = num(p.entry), L = num(p.leverage), maxL = num(p.maxLeverage);
+    var init = num(p.initialEquity), maxDD = nz(p.maxDrawdownPct);
+
+    if (!(E > 0)) Er.push('ERR_EQUITY');
+    if (!(P > 0)) Er.push('ERR_ENTRY');
+    if (!(L >= 1)) Er.push('ERR_LEV_MIN');
+    else if (isFinite(maxL) && L > maxL) Er.push('ERR_LEV_CAP');
+
+    var maker = num(p.makerFeePct), taker = num(p.takerFeePct), slip = nz(p.slippagePct);
+    if (isNaN(maker)) maker = 0; if (isNaN(taker)) taker = 0;
+    if (maker < 0 || taker < 0 || slip < 0) Er.push('ERR_COST');
+
+    /* stop distance s (fraction) */
+    var s = NaN;
+    if (p.stopMode === 'price') {
+      var sp = num(p.stopPrice);
+      if (!(sp > 0)) Er.push('ERR_STOP');
+      else {
+        s = P > 0 ? dir * (P - sp) / P : NaN;
+        if (!(s > 0)) Er.push('ERR_STOP_SIDE');
+      }
+    } else {
+      s = num(p.stopPct) / 100;
+      if (!(s > 0 && s < 1)) Er.push('ERR_STOP');
+    }
+    /* target distance t (fraction) */
+    var t = NaN;
+    if (p.targetMode === 'price') {
+      var tp0 = num(p.targetPrice);
+      if (!(tp0 > 0)) Er.push('ERR_TARGET');
+      else {
+        t = P > 0 ? dir * (tp0 - P) / P : NaN;
+        if (!(t > 0)) Er.push('ERR_TARGET_SIDE');
+      }
+    } else if (p.targetMode === 'pct') {
+      t = num(p.targetPct) / 100;
+      if (!(t > 0)) Er.push('ERR_TARGET');
+    } else {
+      var rr = num(p.rr);
+      if (!(rr > 0)) Er.push('ERR_RR'); else if (s > 0) t = s * rr;
+    }
+    if (side === 'short' && t >= 1) Er.push('ERR_TARGET');
+
+    /* drawdown floor */
+    var floor = isNaN(init) ? 0 : init * (1 - maxDD / 100);
+    var buffer = E - floor;
+    if (E > 0 && !isNaN(init) && buffer <= 1e-12) Er.push('ERR_DD_HALT');
+
+    if (Er.length) return invalid(Er, side);
+
+    /* cost model (fractions of notional) */
+    var fEntry = (p.entryType === 'maker' ? maker : taker) / 100;
+    var fTP = (p.tpType === 'taker' ? taker : maker) / 100;
+    var fSL = (p.slType === 'maker' ? maker : taker) / 100;
+    var sl = slip / 100;
+    var slipEntry = p.entryType === 'maker' ? 0 : sl;
+    var slipTP = p.tpType === 'taker' ? sl : 0;
+    var slipSL = p.slType === 'maker' ? 0 : sl;
+    var fund = fundingFraction(side, nz(p.fundingRatePct), nz(p.holdHours), nz(p.fundingIntervalH));
+
+    var costStop = fEntry + fSL + slipEntry + slipSL;
+    var costTP = fEntry + fTP + slipEntry + slipTP;
+    var lossFrac = s + costStop + fund;     /* net loss per $ notional if SL hits */
+    var winFrac = t - costTP - fund;        /* net gain per $ notional if TP hits */
+
+    /* risk budget (clamped to remaining drawdown buffer — never silent) */
+    var R0 = (p.riskBudgetUsd != null && isFinite(p.riskBudgetUsd)) ? num(p.riskBudgetUsd) : E * nz(p.riskPct) / 100;
+    if (!(R0 > 0)) return invalid(['ERR_RISK'], side);
+    var R = R0;
+    if (!isNaN(init) && R0 > buffer) { R = buffer; W.push('WARN_RISK_CLAMPED_DD'); }
+
+    var sizingLoss = p.costsInRisk === false ? s : s + costStop + Math.max(fund, 0);
+    var N0 = R / sizingLoss;
+
+    /* margin / leverage cap: margin + entry fee must fit in free balance */
+    var free = (p.freeBalance != null && isFinite(p.freeBalance)) ? num(p.freeBalance) : E;
+    var capN = Math.max(free, 0) / (1 / L + fEntry);
+    var N1 = N0;
+    if (N0 > capN + 1e-12) {
+      if (p.capMode === 'block') Er.push('ERR_MARGIN');
+      else { N1 = capN; W.push('WARN_CAPPED_MARGIN'); }
+    }
+
+    /* quantity: round DOWN to step */
+    var step = num(p.qtyStep) > 0 ? num(p.qtyStep) : 1e-8;
+    var Q = floorTo(N1 / P, step);
+    var minQ = nz(p.minQty);
+    if (!(Q > 0) || Q < minQ - 1e-15) {
+      Er.push('ERR_MIN_QTY');
+      /* risk was clamped to the remaining drawdown buffer and that buffer cannot fund a minimum order */
+      if (W.indexOf('WARN_RISK_CLAMPED_DD') >= 0) Er.push('ERR_DD_BUFFER');
+    }
+    var Nq = Q * P;
+    if (nz(p.minNotional) > 0 && Nq < p.minNotional) Er.push('ERR_MIN_NOTIONAL');
+    if (Q > 0 && N1 > 0 && Nq < N1 * 0.9) W.push('WARN_ROUNDING_BIG');
+
+    var margin = Nq / L;
+    var grossRisk = Nq * s, grossReward = Nq * t;
+    var netLoss = Nq * lossFrac, netWin = Nq * winFrac;
+    if (netWin <= 0) W.push('WARN_NET_REWARD_NEG');
+    if (netLoss > R * (1 + 1e-9) + 1e-12 && Nq > 0) W.push('WARN_RISK_OVER_BUDGET');
+
+    /* liquidation estimate (isolated, simplified) */
+    var mmr = nz(p.mmrPct) / 100;
+    var liqDist = 1 / L - mmr;
+    var liqPrice = P * (1 - dir * liqDist);
+    if (!(liqDist > 0)) Er.push('ERR_STOP_BEYOND_LIQ');
+    else if (s >= liqDist) Er.push('ERR_STOP_BEYOND_LIQ');
+    else if (s > 0.5 * liqDist) W.push('WARN_LIQ_CLOSE');
+
+    if (!isNaN(init) && E - netLoss < floor - 1e-9) W.push('WARN_BREACH_DD_FLOOR');
+
+    var be = (netWin > 0 && netLoss > 0) ? netLoss / (netLoss + netWin) * 100 : (netLoss > 0 ? 100 : NaN);
+    var status = Er.length ? 'blocked' : (W.some(function (w) { return w === 'WARN_CAPPED_MARGIN' || w === 'WARN_RISK_CLAMPED_DD'; }) ? 'adjusted' : 'ok');
+
+    return {
+      ok: Er.length === 0, status: status, errors: Er, warnings: W, isEstimate: true,
+      side: side, entry: P, equity: E, leverage: L,
+      slPrice: P * (1 - dir * s), tpPrice: P * (1 + dir * t),
+      stopPct: s * 100, targetPct: t * 100, rrGross: t / s,
+      riskBudget: R, riskBudgetRequested: R0,
+      qty: Q, qtyUncapped: N0 / P, notional: Nq, notionalTarget: N1,
+      margin: margin, effLeverage: Nq / E,
+      liqPrice: liqPrice, liqDistPct: liqDist * 100,
+      grossRisk: grossRisk, grossReward: grossReward,
+      fees: { entry: Nq * fEntry, tp: Nq * fTP, sl: Nq * fSL },
+      slippage: { entry: Nq * slipEntry, tp: Nq * slipTP, sl: Nq * slipSL },
+      funding: Nq * fund,
+      netLoss: netLoss, netWin: netWin,
+      netRR: netLoss > 0 ? netWin / netLoss : NaN,
+      breakevenWR: be,
+      riskPctEquity: netLoss / E * 100,
+      costs: { loss: netLoss - grossRisk, win: grossReward - netWin },
+      floor: floor, buffer: buffer
+    };
+  }
+
+  /* ---------- guards ---------- */
+  function streaks(pnls) {
+    var maxW = 0, maxL = 0, cw = 0, cl = 0;
+    for (var i = 0; i < pnls.length; i++) {
+      if (pnls[i] > 0) { cw++; cl = 0; if (cw > maxW) maxW = cw; }
+      else if (pnls[i] < 0) { cl++; cw = 0; if (cl > maxL) maxL = cl; }
+      else { cw = 0; cl = 0; }
+    }
+    return { maxWin: maxW, maxLoss: maxL, currentLoss: cl, currentWin: cw };
+  }
+
+  /* st: {equity, initialEquity, tradesToday, pnlToday, dayStartEquity, consecLosses} */
+  function checkGuards(s, st) {
+    var reasons = [];
+    var floor = st.initialEquity * (1 - s.maxDrawdownPct / 100);
+    if (st.equity <= floor + 1e-9) reasons.push('GUARD_DD');
+    if (st.tradesToday >= s.maxDailyTrades) reasons.push('GUARD_DAILY_TRADES');
+    var ds = st.dayStartEquity > 0 ? st.dayStartEquity : st.equity;
+    if (s.maxDailyLossPct > 0 && -st.pnlToday >= s.maxDailyLossPct / 100 * ds - 1e-9) reasons.push('GUARD_DAILY_LOSS');
+    if (s.maxConsecLosses > 0 && st.consecLosses >= s.maxConsecLosses) reasons.push('GUARD_CONSEC');
+    return { allowed: reasons.length === 0, reasons: reasons };
+  }
+
+  /* ---------- outcome generators ---------- */
+  function evenOutcomes(n, winRatePct) {
+    var w = Math.round(n * winRatePct / 100), out = [];
+    for (var i = 0; i < n; i++) out.push(Math.floor((i + 1) * w / n) > Math.floor(i * w / n) ? 'win' : 'loss');
+    return out;
+  }
+  function seededOutcomes(n, winRatePct, seed) {
+    var rnd = mulberry32(seed), out = [];
+    for (var i = 0; i < n; i++) out.push(rnd() < winRatePct / 100 ? 'win' : 'loss');
+    return out;
+  }
+  function sideFor(i, mode) { return mode === 'long' ? 'long' : mode === 'short' ? 'short' : (i % 2 === 0 ? 'long' : 'short'); }
+
+  /* ---------- sequential trade planner ----------
+   * rows: [{side, outcome: win|loss|pending|skip, entry?}] ; mode: compound | fixed */
+  function runPlan(s, rows, opts) {
+    opts = opts || {};
+    var mode = opts.mode || s.compoundMode || 'compound';
+    var init = s.initialEquity, floor = init * (1 - s.maxDrawdownPct / 100);
+    var E = init, peak = init, day = 1, dayTrades = 0, dayStart = E, dayPnl = 0, consec = 0, halted = false;
+    var out = [], curve = [init], pnls = [];
+    var wins = 0, losses = 0, grossSum = 0, costSum = 0, maxDDp = 0, executed = 0;
+    var q = Object.assign({}, s);
+
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      var row = { i: i + 1, side: r.side === 'short' ? 'short' : 'long', outcome: r.outcome, entry: r.entry > 0 ? r.entry : s.entryPrice };
+      if (r.outcome === 'skip') { row.status = 'skip'; row.eqBefore = E; row.eqAfter = E; out.push(row); continue; }
+      if (halted || E <= floor + 1e-9) { halted = true; row.status = 'halted'; row.eqBefore = E; row.eqAfter = E; out.push(row); continue; }
+
+      if (dayTrades >= s.maxDailyTrades) { day++; dayTrades = 0; dayStart = E; dayPnl = 0; }
+      if (s.maxDailyLossPct > 0 && -dayPnl >= s.maxDailyLossPct / 100 * dayStart - 1e-9) { day++; dayTrades = 0; dayStart = E; dayPnl = 0; }
+      if (s.maxConsecLosses > 0 && consec >= s.maxConsecLosses) {
+        row.status = 'paused'; row.eqBefore = E; row.eqAfter = E; consec = 0; out.push(row); continue;
+      }
+
+      q.side = row.side; q.entry = row.entry; q.equity = E; q.freeBalance = E;
+      q.stopMode = 'pct'; q.targetMode = 'rr';
+      q.riskBudgetUsd = mode === 'fixed' ? init * s.riskPct / 100 : null;
+      var pos = computePosition(q);
+      row.day = day; row.eqBefore = E;
+      if (!pos.ok) {
+        row.status = (pos.errors.indexOf('ERR_DD_HALT') >= 0 || pos.errors.indexOf('ERR_DD_BUFFER') >= 0) ? 'halted' : 'invalid';
+        if (row.status === 'halted') halted = true;
+        row.errors = pos.errors; row.eqAfter = E; out.push(row); continue;
+      }
+      row.qty = pos.qty; row.notional = pos.notional; row.margin = pos.margin;
+      row.risk = pos.netLoss; row.reward = pos.netWin; row.warnings = pos.warnings;
+      dayTrades++;
+      if (r.outcome === 'win' || r.outcome === 'loss') {
+        var win = r.outcome === 'win';
+        row.gross = win ? pos.grossReward : -pos.grossRisk;
+        row.costs = win ? pos.costs.win : pos.costs.loss;
+        row.pnl = win ? pos.netWin : -pos.netLoss;
+        E += row.pnl; dayPnl += row.pnl;
+        if (win) { wins++; consec = 0; } else { losses++; consec++; }
+        grossSum += row.gross; costSum += row.costs; executed++; pnls.push(row.pnl);
+        row.status = 'executed';
+      } else { row.status = 'pending'; row.pnl = 0; row.gross = 0; row.costs = 0; }
+      if (E > peak) peak = E;
+      row.eqAfter = E;
+      row.ddPeakPct = (peak - E) / peak * 100;
+      row.ddInitPct = Math.max(0, (init - E) / init * 100);
+      if (row.ddPeakPct > maxDDp) maxDDp = row.ddPeakPct;
+      curve.push(E);
+      out.push(row);
+    }
+    return {
+      rows: out, curve: curve, pnls: pnls, floor: floor, halted: halted,
+      summary: {
+        finalEquity: E, peak: peak, netPnl: E - init, returnPct: (E / init - 1) * 100,
+        maxDDPct: maxDDp, executed: executed, wins: wins, losses: losses,
+        winRate: executed ? wins / executed * 100 : NaN,
+        gross: grossSum, costs: costSum, days: day
+      }
+    };
+  }
+
+  /* ---------- analytics ---------- */
+  function analyze(pnls, curve) {
+    var n = pnls.length, wins = 0, losses = 0, gw = 0, gl = 0;
+    for (var i = 0; i < n; i++) {
+      if (pnls[i] > 0) { wins++; gw += pnls[i]; } else if (pnls[i] < 0) { losses++; gl += -pnls[i]; }
+    }
+    var avgWin = wins ? gw / wins : 0, avgLoss = losses ? gl / losses : 0;
+    var wr = n ? wins / n : NaN;
+    var exp = n ? (gw - gl) / n : NaN;
+    var peak = -Infinity, mdd = 0, mddUsd = 0;
+    (curve || []).forEach(function (v) {
+      if (v > peak) peak = v;
+      var d = peak > 0 ? (peak - v) / peak * 100 : 0;
+      if (d > mdd) mdd = d;
+      if (peak - v > mddUsd) mddUsd = peak - v;
+    });
+    return {
+      n: n, wins: wins, losses: losses, winRate: wr * 100,
+      avgWin: avgWin, avgLoss: avgLoss, payoff: avgLoss > 0 ? avgWin / avgLoss : NaN,
+      expectancy: exp, expectancyR: avgLoss > 0 ? exp / avgLoss : NaN,
+      profitFactor: gl > 0 ? gw / gl : (gw > 0 ? Infinity : NaN),
+      grossWins: gw, grossLosses: gl, net: gw - gl,
+      maxDDPct: mdd, maxDDUsd: mddUsd, streaks: streaks(pnls)
+    };
+  }
+
+  /* theoretical expectancy from win rate and per-trade net win/loss (USD) */
+  function theoretical(winRatePct, netWin, netLoss) {
+    var p = winRatePct / 100;
+    var e = p * netWin - (1 - p) * netLoss;
+    return {
+      expectancy: e,
+      expectancyR: netLoss > 0 ? e / netLoss : NaN,
+      breakevenWR: (netWin + netLoss) > 0 ? netLoss / (netWin + netLoss) * 100 : NaN,
+      profitFactor: (1 - p) * netLoss > 0 ? p * netWin / ((1 - p) * netLoss) : Infinity
+    };
+  }
+
+  /* ---------- compound / fixed growth projection (expected values) ---------- */
+  function growthProjection(o) {
+    var r = o.riskPct / 100, p = o.winRatePct / 100, R = o.netRR, n = o.n;
+    var m = r * (p * R - (1 - p));               /* mean return per trade as fraction of base */
+    var g = (1 + r * R > 0 && 1 - r > 0) ? p * Math.log(1 + r * R) + (1 - p) * Math.log(1 - r) : NaN;
+    var comp = [], fixed = [], typical = [];
+    for (var k = 0; k <= n; k++) {
+      comp.push(o.initial * Math.pow(1 + m, k));
+      fixed.push(o.initial * (1 + k * m));
+      typical.push(o.initial * Math.exp(k * g));
+    }
+    return { expectedCompound: comp, expectedFixed: fixed, typicalGeometric: typical, meanPerTrade: m, logGrowth: g };
+  }
+
+  /* ---------- Monte Carlo (hypothetical, seeded, reproducible) ---------- */
+  function monteCarlo(s, o) {
+    var paths = Math.max(1, Math.min(50000, Math.floor(o.paths || s.mcPaths || 2000)));
+    var T = Math.max(1, Math.floor(o.trades || s.planTrades));
+    var wr = (o.winRatePct != null ? o.winRatePct : s.winRatePct) / 100;
+    var mode = o.mode || s.compoundMode || 'compound';
+    var seed = o.seed != null ? o.seed : s.seed;
+    var sideMode = o.sideMode || 'alternate';
+    var rnd = mulberry32(seed);
+    var init = s.initialEquity, floor = init * (1 - s.maxDrawdownPct / 100);
+    var q = Object.assign({}, s, { stopMode: 'pct', targetMode: 'rr', entry: o.entry > 0 ? o.entry : s.entryPrice });
+    var matrix = [], finals = [], maxDDs = [], lossStreaks = [], halts = 0, skipped = 0, profitable = 0;
+
+    for (var pI = 0; pI < paths; pI++) {
+      var E = init, peak = init, mdd = 0, curve = new Array(T + 1), halted = false, cl = 0, ml = 0;
+      curve[0] = E;
+      for (var t = 0; t < T; t++) {
+        if (!halted && E <= floor + 1e-9) { halted = true; halts++; }
+        var win = rnd() < wr;   /* always draw, keeps sequences comparable across settings */
+        if (!halted) {
+          q.side = sideFor(t, sideMode); q.equity = E; q.freeBalance = E;
+          q.riskBudgetUsd = mode === 'fixed' ? init * s.riskPct / 100 : null;
+          var pos = computePosition(q);
+          if (pos.ok) {
+            E += win ? pos.netWin : -pos.netLoss;
+            if (win) cl = 0; else { cl++; if (cl > ml) ml = cl; }
+          } else if (pos.errors.indexOf('ERR_DD_HALT') >= 0 || pos.errors.indexOf('ERR_DD_BUFFER') >= 0) {
+            halted = true; halts++;
+          } else skipped++;
+          if (E > peak) peak = E;
+          var d = (peak - E) / peak * 100; if (d > mdd) mdd = d;
+        }
+        curve[t + 1] = E;
+      }
+      if (!halted && E <= floor + 1e-9) { halted = true; halts++; }
+      matrix.push(curve); finals.push(E); maxDDs.push(mdd); lossStreaks.push(ml);
+      if (E > init) profitable++;
+    }
+    var sf = finals.slice().sort(function (a, b) { return a - b; });
+    var sd = maxDDs.slice().sort(function (a, b) { return a - b; });
+    var sl = lossStreaks.slice().sort(function (a, b) { return a - b; });
+    var pc = function (arr, q2) { return percentile(arr, q2); };
+    var bands = { p5: [], p25: [], p50: [], p75: [], p95: [] };
+    var col = new Array(paths);
+    for (var k = 0; k <= T; k++) {
+      for (var j = 0; j < paths; j++) col[j] = matrix[j][k];
+      col.sort(function (a, b) { return a - b; });
+      bands.p5.push(pc(col, 0.05)); bands.p25.push(pc(col, 0.25)); bands.p50.push(pc(col, 0.5));
+      bands.p75.push(pc(col, 0.75)); bands.p95.push(pc(col, 0.95));
+    }
+    var lo = sf[0], hi = sf[sf.length - 1], nb = 20, w = (hi - lo) / nb || 1, hist = [];
+    for (var b = 0; b < nb; b++) hist.push({ from: lo + b * w, to: lo + (b + 1) * w, count: 0 });
+    finals.forEach(function (v) { var idx = Math.min(nb - 1, Math.floor((v - lo) / w)); hist[idx].count++; });
+    var mean = finals.reduce(function (a, b2) { return a + b2; }, 0) / paths;
+    return {
+      hypothetical: true, paths: paths, trades: T, winRatePct: wr * 100, mode: mode, seed: seed,
+      pct: { p5: pc(sf, 0.05), p25: pc(sf, 0.25), p50: pc(sf, 0.5), p75: pc(sf, 0.75), p95: pc(sf, 0.95) },
+      mean: mean, min: lo, max: hi,
+      probProfit: profitable / paths * 100, probHalt: halts / paths * 100,
+      medianMaxDD: pc(sd, 0.5), p95MaxDD: pc(sd, 0.95), medianLossStreak: pc(sl, 0.5), maxLossStreak: sl[sl.length - 1],
+      skippedTrades: skipped, bands: bands, hist: hist, floor: floor
+    };
+  }
+
+  /* ---------- CSV (RFC4180-ish, spreadsheet-formula-injection safe) ---------- */
+  function csvCell(v) {
+    if (v == null) return '';
+    var s2 = typeof v === 'number' ? (isFinite(v) ? String(v) : '') : String(v);
+    if (typeof v === 'string' && /^[=+\-@\t\r]/.test(s2)) s2 = "'" + s2;
+    if (/[",\r\n]/.test(s2)) s2 = '"' + s2.replace(/"/g, '""') + '"';
+    return s2;
+  }
+  function toCSV(rows, cols) {
+    var lines = [cols.map(function (c) { return csvCell(c.label); }).join(',')];
+    rows.forEach(function (r) { lines.push(cols.map(function (c) { return csvCell(r[c.key]); }).join(',')); });
+    return lines.join('\r\n');
+  }
+
+  return {
+    DEFAULTS: DEFAULTS, num: num, floorTo: floorTo, stepDecimals: stepDecimals, mulberry32: mulberry32,
+    percentile: percentile, toLocal: toLocal, fromLocal: fromLocal, fundingFraction: fundingFraction,
+    computePosition: computePosition, checkGuards: checkGuards, streaks: streaks,
+    evenOutcomes: evenOutcomes, seededOutcomes: seededOutcomes, sideFor: sideFor,
+    runPlan: runPlan, analyze: analyze, theoretical: theoretical,
+    growthProjection: growthProjection, monteCarlo: monteCarlo, toCSV: toCSV
+  };
+});
+</script>
+<script>window.I18N = {
+  title: ["ترمینال مدیریت ریسک و ریوارد", "Risk & Reward Management Terminal"],
+  subtitle: ["محاسبات تخمینی، بدون اتصال به صرافی", "estimates only, no exchange connection"],
+  banner: ["همه اعداد تخمینی و بر پایه فرضیات قابل‌ویرایش شما هستند، نه اجرای واقعی صرافی. کارمزد، فاندینگ، اسلیپیج، حداقل سفارش و قیمت لحظه‌ای را خودتان از LBank وارد و بررسی کنید؛ این ابزار به صرافی متصل نیست.", "All numbers are ESTIMATES based on your editable assumptions, not actual exchange execution. Enter and verify fees, funding, slippage, minimum order size and prices from LBank yourself; this tool is not connected to the exchange."],
+  t_overview: ["نمای کلی", "Overview"], t_calc: ["ماشین‌حساب", "Calculator"], t_planner: ["برنامه‌ریز معاملات", "Trade Planner"],
+  t_sim: ["شبیه‌ساز", "Simulator"], t_analytics: ["تحلیل", "Analytics"], t_journal: ["ژورنال", "Journal"], t_settings: ["تنظیمات", "Settings"],
+  long: ["لانگ", "Long"], short: ["شورت", "Short"], maker: ["میکر", "Maker"], taker: ["تیکر", "Taker"], isolated: ["ایزوله (Isolated)", "Isolated"],
+  price: ["قیمت", "Price"], all: ["همه", "All"], alt: ["متناوب (لانگ/شورت)", "Alternate (long/short)"], auto: ["خودکار", "auto"], est: ["تخمینی", "est."],
+  estimate: ["تخمینی", "ESTIMATE"], closed: ["بسته‌شده", "closed"], empty: ["داده‌ای برای نمایش نیست", "No data yet"], light: ["روشن", "Light"], dark: ["تیره", "Dark"],
+  del: ["حذف", "Delete"], saved: ["به ژورنال اضافه شد", "Saved to journal"], u_toman: ["تومان", "Toman"], u_rial: ["ریال", "IRR (rial)"],
+  h_inputs: ["ورودی‌ها", "Inputs"], h_exec: ["نوع اجرای سفارش", "Order execution"], h_result: ["نتیجه", "Result"], h_sizing: ["اندازه پوزیشن", "Position sizing"],
+  h_rr: ["ریسک و ریوارد (ناخالص ← خالص)", "Risk & reward (gross → net)"], h_fees: ["ماشین‌حساب کارمزد (رفت‌وبرگشت)", "Fee calculator (round trip)"], h_funding: ["برآورد فاندینگ", "Funding estimate"],
+  fund_note: ["فاندینگ با نرخ ثابت ورودی و مدت نگهداری تخمین زده می‌شود؛ نرخ واقعی هر دوره تغییر می‌کند. در نرخ مثبت، لانگ می‌پردازد و شورت دریافت می‌کند.", "Funding is estimated from a fixed input rate and holding time; the real rate changes each period. With a positive rate, longs pay and shorts receive."],
+  h_planner: ["جدول معاملات پلن", "Planned trades"], h_growth: ["شبیه‌ساز رشد سرمایه (مقادیر مورد انتظار)", "Capital growth projection (expected values)"],
+  h_expect: ["امید ریاضی و نرخ برد", "Expectancy & win rate"], h_fan: ["مونت‌کارلو: بازه منحنی سرمایه", "Monte Carlo: equity range"], h_hist: ["توزیع سرمایه نهایی", "Final equity distribution"],
+  h_guard: ["محافظ‌های ریسک", "Risk guards"], h_next: ["معامله بعدی (برآورد)", "Next trade (estimate)"], h_account: ["حساب و نرخ تبدیل", "Account & FX"],
+  h_risk: ["ریسک و محدودیت‌ها", "Risk & limits"], h_costs: ["کارمزد، اسلیپیج، فاندینگ", "Fees, slippage, funding"], h_specs: ["ریزمشخصات قرارداد (فرضی)", "Contract specs (assumed)"],
+  h_opts: ["گزینه‌های ایمنی", "Safety options"], h_validation: ["اعتبارسنجی تنظیمات", "Settings validation"],
+  k_initial: ["سرمایه اولیه", "Initial equity"], k_initial_s: ["مبنای ریسک و دراودان", "base for risk & drawdown"], k_equity: ["سرمایه فعلی", "Current equity"],
+  k_free: ["موجودی آزاد", "Free balance"], k_margin: ["مارجین استفاده‌شده", "Used margin"], k_exposure: ["اکسپوژر باز", "Open exposure"], k_openrisk: ["ریسک باز", "Open risk"],
+  k_dd: ["دراودان", "Drawdown"], k_limit: ["حد", "limit"], k_peak: ["از سقف", "from peak"], k_floor: ["کف سرمایه", "Equity floor"],
+  k_floor_s: ["زیر این مقدار معامله جدید مسدود است", "new trades blocked at or below this"], k_today: ["معاملات امروز", "Trades today"],
+  src_note: ["مقادیر «واقعی» این صفحه از ژورنال شما (ورودی دستی) محاسبه می‌شوند و از صرافی خوانده نمی‌شوند.", "\"Actual\" values here come from your journal (manual entries); nothing is read from the exchange."],
+  guard_ok: ["همه محافظ‌ها سبز هستند؛ باز کردن معامله جدید مجاز است.", "All guards are green; opening a new trade is allowed."],
+  guard_confirm: ["محافظ‌های ریسک معامله جدید را مجاز نمی‌دانند. با این حال ذخیره شود؟", "Risk guards do not allow a new trade. Save anyway?"],
+  GUARD_DD: ["حد دراودان کل فعال است.", "Total drawdown limit is active."], GUARD_DAILY_TRADES: ["سقف معاملات روزانه پر شده است.", "Daily trade limit reached."],
+  GUARD_DAILY_LOSS: ["حد ضرر روزانه فعال شده است.", "Daily loss limit reached."], GUARD_CONSEC: ["سقف باخت‌های پیاپی فعال شده است.", "Consecutive-loss limit reached."],
+  c_equity_actual: ["منحنی سرمایه (ژورنال)", "Equity curve (journal)"], c_equity_plan: ["منحنی سرمایه (پلن)", "Equity curve (plan)"], c_equity: ["منحنی سرمایه", "Equity curve"],
+  c_dd: ["دراودان از سقف (٪)", "Drawdown from peak (%)"], c_dist: ["توزیع سود و زیان", "P&L distribution"],
+  r_side: ["جهت", "Side"], r_entry: ["قیمت ورود", "Entry"], r_sl: ["حد ضرر (SL)", "Stop loss"], r_tp: ["حد سود (TP)", "Take profit"], r_qty: ["مقدار BTC", "BTC quantity"],
+  r_qty_raw: ["مقدار قبل از گرد کردن/سقف", "Quantity before rounding/cap"], r_notional: ["ارزش پوزیشن", "Notional"], r_margin: ["مارجین لازم", "Required margin"],
+  r_efflev: ["لورج مؤثر / حداکثر", "Effective / max leverage"], r_liq: ["قیمت لیکوییدیشن (تخمین)", "Liquidation (estimate)"], r_budget: ["بودجه ریسک", "Risk budget"],
+  r_grossrisk: ["ضرر ناخالص در SL", "Gross loss at SL"], r_feeloss: ["کارمزد (ورود + SL)", "Fees (entry + SL)"], r_slip: ["اسلیپیج", "Slippage"], r_fund: ["فاندینگ", "Funding"],
+  r_netloss: ["ضرر خالص در SL", "Net loss at SL"], r_grossreward: ["سود ناخالص در TP", "Gross profit at TP"], r_feewin: ["کارمزد (ورود + TP)", "Fees (entry + TP)"],
+  r_netwin: ["سود خالص در TP", "Net profit at TP"], r_rrg: ["R:R ناخالص", "Gross R:R"], r_rrn: ["R:R خالص", "Net R:R"], r_be: ["نرخ برد سر‌به‌سر (خالص)", "Break-even win rate (net)"],
+  r_riskpct: ["ریسک خالص (٪ سرمایه)", "Net risk (% of equity)"],
+  b_saveCalc: ["ذخیره در ژورنال", "Save to journal"], b_fillEven: ["پر کردن بر اساس نرخ برد (یکنواخت)", "Fill by win rate (even)"], b_fillRand: ["پر کردن تصادفی (با seed)", "Fill randomly (seeded)"],
+  b_clearPlan: ["پاک کردن نتایج", "Clear outcomes"], b_resetSides: ["بازنشانی جهت‌ها", "Reset sides"], b_exportPlan: ["خروجی CSV پلن", "Export plan CSV"], b_runSim: ["اجرای شبیه‌سازی", "Run simulation"],
+  b_addTrade: ["افزودن معامله", "Add trade"], b_exportJ: ["خروجی CSV ژورنال", "Export journal CSV"], b_clearJ: ["پاک کردن ژورنال", "Clear journal"], b_reset: ["بازنشانی به پیش‌فرض", "Reset to defaults"],
+  p_final: ["سرمایه نهایی", "Final equity"], p_net: ["سود/زیان خالص", "Net P&L"], p_costs: ["هزینه‌ها", "costs"], p_wl: ["برد / باخت", "Wins / losses"], p_days: ["روزهای معاملاتی", "Trading days"],
+  p_executed: ["معامله اجراشده", "executed"], p_state: ["وضعیت پلن", "Plan state"], p_halted: ["متوقف (حد دراودان)", "Halted (drawdown)"], p_active: ["فعال", "Active"],
+  p_state_s: ["بر اساس حد دراودان و حداقل سفارش", "by drawdown limit & min order"], p_day: ["روز", "Day"], p_outcome: ["نتیجه", "Outcome"], p_risk: ["ریسک خالص", "Net risk"],
+  p_reward: ["ریوارد خالص", "Net reward"], p_pnl: ["سود/زیان", "P&L"], p_eq: ["سرمایه", "Equity"], p_ddp: ["دراودان ٪", "DD %"], p_status: ["وضعیت", "Status"],
+  o_pending: ["در انتظار", "Pending"], o_win: ["برد", "Win"], o_loss: ["باخت", "Loss"], o_skip: ["رد شده", "Skip"],
+  ps_executed: ["اجرا شد", "executed"], ps_pending: ["در انتظار", "pending"], ps_skip: ["رد شد", "skipped"], ps_halted: ["متوقف", "halted"], ps_paused: ["توقف (باخت پیاپی)", "paused"], ps_invalid: ["نامعتبر", "invalid"],
+  st_ok: ["مجاز", "OK"], st_adjusted: ["تعدیل‌شده", "ADJUSTED"], st_blocked: ["مسدود", "BLOCKED"],
+  res_open: ["باز", "open"], res_win: ["برد", "win"], res_loss: ["باخت", "loss"], res_be: ["سر‌به‌سر", "b/e"],
+  m_compound: ["مرکب (٪ از سرمایه فعلی)", "Compounded (% of current equity)"], m_fixed: ["ثابت (دلار ثابت از سرمایه اولیه)", "Fixed (fixed $ from initial equity)"],
+  sim_wait: ["در حال اجرای شبیه‌سازی…", "Running simulation…"],
+  sim_disc: ["فرضی (hypothetical)، نه پیش‌بینی. نتایج به فرضیات ورودی، seed و تعداد مسیرها وابسته‌اند. محافظ حد ضرر روزانه در شبیه‌سازی اعمال نمی‌شود؛ حد دراودان کل اعمال می‌شود.", "Hypothetical, not a forecast. Results depend on input assumptions, seed and path count. The daily-loss guard is not applied in simulation; the total drawdown limit is."],
+  sim_empty: ["برای دیدن نتایج مونت‌کارلو روی «اجرای شبیه‌سازی» بزنید.", "Press \"Run simulation\" to see Monte Carlo results."],
+  s_median: ["میانه سرمایه نهایی", "Median final equity"], s_pprofit: ["احتمال سود", "Probability of profit"], s_phalt: ["احتمال رسیدن به حد دراودان", "Probability of hitting drawdown limit"],
+  s_phalt_s: ["مسیرهایی که معامله جدید در آن‌ها مسدود شد", "paths where new trades were blocked"], s_mdd: ["میانه بیشینه دراودان", "Median max drawdown"], s_streak: ["باخت پیاپی (میانه)", "Losing streak (median)"],
+  s_mean: ["میانگین", "Mean"], s_params: ["پارامترها", "Parameters"], s_skipped: ["معاملات ردشده", "skipped trades"],
+  g_comp: ["مرکب (مورد انتظار)", "Compound (expected)"], g_fixed: ["ثابت (مورد انتظار)", "Fixed (expected)"], g_typ: ["مسیر معمول (هندسی)", "Typical path (geometric)"],
+  g_note: ["مقدار مورد انتظار میانگین حسابی است. مسیر معمول با رشد لگاریتمی محاسبه می‌شود و معمولاً از مقدار مورد انتظار کمتر است.", "Expected value is an arithmetic mean. The typical path uses log growth and is usually below the expected value."],
+  fan_note: ["نوار تیره: P25 تا P75، نوار روشن: P5 تا P95، خط: میانه.", "Dark band: P25-P75, light band: P5-P95, line: median."],
+  x_exp: ["امید ریاضی هر معامله", "Expectancy per trade"], x_expr: ["امید ریاضی (R)", "Expectancy (R)"], x_pf: ["ضریب سود (Profit Factor)", "Profit factor"],
+  x_mean: ["بازده میانگین هر معامله", "Mean return per trade"], x_log: ["رشد لگاریتمی هر معامله", "Log growth per trade"], x_end: ["سرمایه نهایی (مرکب / ثابت)", "End equity (compound / fixed)"],
+  x_na: ["محاسبه ممکن نیست؛ ورودی‌های ماشین‌حساب را اصلاح کنید.", "Not computable; fix the calculator inputs."], x_wr: ["نرخ برد", "Win rate"],
+  an_n: ["تعداد معاملات", "Trades"], an_net: ["سود/زیان خالص", "Net P&L"], an_avgw: ["میانگین برد", "Average win"], an_avgl: ["میانگین باخت", "Average loss"], an_payoff: ["نسبت برد به باخت", "Payoff"],
+  an_empty: ["معامله بسته‌شده‌ای در این منبع نیست.", "No closed trades in this source."], src_journal: ["ژورنال (ثبت دستی)", "Journal (manual)"], src_planner: ["پلن (فرضی)", "Planner (hypothetical)"],
+  j_date: ["تاریخ", "Date"], j_exit: ["قیمت خروج", "Exit"], j_fees: ["کارمزد واقعی", "Actual fees"], j_funding: ["فاندینگ واقعی", "Actual funding"], j_risk: ["ریسک برنامه‌ریزی‌شده", "Planned risk"],
+  j_result: ["نتیجه", "Result"], j_notes: ["یادداشت", "Notes"],
+  j_empty: ["ژورنال خالی است. از ماشین‌حساب «ذخیره در ژورنال» بزنید یا معامله اضافه کنید.", "Journal is empty. Use \"Save to journal\" in the calculator or add a trade."],
+  j_note: ["کارمزد خالی یعنی برآورد از تنظیمات (تخمینی). سود/زیان خالص = ناخالص − کارمزد − فاندینگ. با وارد کردن قیمت خروج، معامله بسته می‌شود. داده‌ها دستی‌اند و با صرافی تطبیق داده نشده‌اند.", "Empty fees = estimated from settings. Net P&L = gross − fees − funding. Entering an exit price closes the trade. Data is manual and not reconciled with the exchange."],
+  confirm_del: ["این معامله حذف شود؟", "Delete this trade?"], confirm_clear: ["کل ژورنال پاک شود؟ این کار برگشت‌پذیر نیست.", "Clear the whole journal? This cannot be undone."],
+  confirm_reset: ["همه تنظیمات به پیش‌فرض برگردد؟ (ژورنال حفظ می‌شود)", "Reset all settings to defaults? (journal is kept)"],
+  f_entryPrice: ["قیمت ورود (USDT)", "Entry price (USDT)"], f_calcEquity: ["سرمایه برای محاسبه", "Equity for calculation"], f_riskPct: ["ریسک هر معامله (٪)", "Risk per trade (%)"],
+  f_leverage: ["لورج", "Leverage"], f_stop: ["حد ضرر", "Stop loss"], f_target: ["حد سود", "Take profit"], f_stopPct: ["فاصله SL (٪)", "SL distance (%)"], f_stopPrice: ["قیمت SL", "SL price"],
+  f_rr: ["نسبت ریوارد به ریسک (R)", "Reward / risk (R)"], f_targetPct: ["فاصله TP (٪)", "TP distance (%)"], f_targetPrice: ["قیمت TP", "TP price"],
+  f_entryType: ["ورود", "Entry"], f_tpType: ["خروج TP", "TP exit"], f_slType: ["خروج SL", "SL exit"], f_holdHours: ["مدت نگهداری (ساعت)", "Holding time (hours)"],
+  f_planTrades: ["تعداد معاملات پلن", "Planned trades"], f_compoundMode: ["حالت ریسک", "Risk mode"], f_planSide: ["الگوی جهت", "Direction pattern"], f_winRatePct: ["نرخ برد (٪)", "Win rate (%)"],
+  f_seed: ["Seed تصادفی", "Random seed"], f_mcPaths: ["تعداد مسیرها", "Paths"], f_anSource: ["منبع داده", "Data source"], f_jfSide: ["فیلتر جهت", "Side filter"], f_jfStatus: ["فیلتر وضعیت", "Status filter"], f_jfText: ["جستجو در یادداشت", "Search notes"],
+  f_initialEquity: ["سرمایه اولیه (USDT)", "Initial equity (USDT)"], f_capLocal: ["معادل سرمایه", "Capital equivalent"], f_fxRate: ["نرخ هر USDT (دستی)", "USDT rate (manual)"], f_fxUnit: ["واحد پول محلی", "Local currency unit"],
+  f_fxStamp: ["منبع/تاریخ نرخ", "Rate source/date"], f_exchange: ["صرافی", "Exchange"], f_pair: ["جفت‌ارز", "Pair"], f_marginMode: ["حالت مارجین", "Margin mode"],
+  f_maxLeverage: ["حداکثر لورج مجاز", "Max allowed leverage"], f_maxDrawdownPct: ["حداکثر دراودان کل (٪)", "Max total drawdown (%)"], f_maxDailyTrades: ["حداکثر معاملات روزانه", "Max daily trades"],
+  f_maxDailyLossPct: ["حداکثر ضرر روزانه (٪)", "Max daily loss (%)"], f_maxConsecLosses: ["حداکثر باخت پیاپی", "Max consecutive losses"],
+  f_makerFeePct: ["کارمزد میکر (٪)", "Maker fee (%)"], f_takerFeePct: ["کارمزد تیکر (٪)", "Taker fee (%)"], f_slippagePct: ["اسلیپیج هر سفارش مارکت (٪)", "Slippage per market leg (%)"],
+  f_fundingRatePct: ["نرخ فاندینگ هر دوره (٪)", "Funding rate per period (%)"], f_fundingIntervalH: ["طول دوره فاندینگ (ساعت)", "Funding interval (hours)"],
+  f_qtyStep: ["گام حجم (BTC)", "Quantity step (BTC)"], f_minQty: ["حداقل حجم (BTC)", "Min quantity (BTC)"], f_minNotional: ["حداقل ارزش سفارش (USDT)", "Min notional (USDT)"], f_mmrPct: ["نرخ مارجین نگهداری (٪)", "Maintenance margin rate (%)"],
+  f_costsInRisk: ["کارمزد و اسلیپیج داخل بودجه ریسک", "Fees & slippage inside risk budget"], f_capMode: ["وقتی مارجین/لورج کافی نیست", "When margin/leverage is insufficient"],
+  cap_cap: ["تعدیل اندازه (با هشدار)", "Reduce size (with warning)"], cap_block: ["مسدود کردن معامله", "Block the trade"],
+  tip_entry: ["قیمت ورود را دستی وارد کنید؛ قیمت زنده دریافت نمی‌شود.", "Enter the entry price manually; no live price is fetched."],
+  tip_calcEquity: ["خالی = سرمایه فعلی از ژورنال. برای محاسبه فرضی عدد دلخواه بگذارید.", "Empty = current equity from the journal. Enter a number for a what-if."],
+  tip_risk: ["درصدی از سرمایه که با برخورد به SL از دست می‌رود (خالص، اگر گزینه کارمزد داخل ریسک فعال باشد).", "Share of equity lost if SL is hit (net, when fees-in-risk is enabled)."],
+  tip_lev: ["لورج فقط مارجین لازم را تعیین می‌کند؛ ریسک دلاری از فاصله SL می‌آید. بیش از حداکثر مجاز مسدود می‌شود.", "Leverage only sets required margin; dollar risk comes from the SL distance. Above the max it is blocked."],
+  tip_hold: ["مدت نگهداری برای برآورد فاندینگ", "Holding time used to estimate funding"], tip_fx: ["نرخ دستی هر USDT به واحد انتخابی؛ زنده نیست.", "Manual rate per USDT in the chosen unit; not live."],
+  tip_consec: ["۰ یعنی غیرفعال", "0 = disabled"],
+  tip_specs: ["گام و حداقل حجم LBank را از صرافی بررسی کنید؛ مقدار پیش‌فرض فرضی است. حجم همیشه رو به پایین گرد می‌شود.", "Check LBank's real step/minimum; defaults are assumptions. Quantity is always rounded DOWN."],
+  tip_mmr: ["برای تخمین قیمت لیکوییدیشن؛ مقدار واقعی را از صرافی بگیرید.", "Used for the liquidation estimate; get the real value from the exchange."],
+  tip_costsInRisk: ["اگر فعال باشد، ضرر خالص (با کارمزد و اسلیپیج) از ریسک تنظیمی بیشتر نمی‌شود.", "When enabled, net loss (incl. fees & slippage) never exceeds the configured risk."],
+  tip_capMode: ["اگر اندازه لازم از مارجین/لورج مجاز بیشتر شد: تعدیل با هشدار یا مسدود.", "If required size exceeds allowed margin/leverage: reduce with a warning, or block."],
+  ph_fxStamp: ["مثلاً 2026-11-21 / منبع", "e.g. 2026-11-21 / source"],
+  note_assump: ["کارمزدها، فاندینگ، اسلیپیج، ریزمشخصات قرارداد (گام/حداقل حجم) و نرخ تبدیل مقادیر پیش‌فرضِ قابل‌ویرایش هستند و از صرافی خوانده نشده‌اند. قبل از معامله واقعی با مقادیر رسمی LBank تطبیق دهید. نرخ پیش‌فرض از تقسیم ۱۲٬۰۰۰٬۰۰۰ بر ۴۵ به دست آمده است؛ اگر منظورتان ریال بود، واحد را عوض کنید یا نرخ را اصلاح کنید.", "Fees, funding, slippage, contract specs (step/min size) and FX are editable defaults, not read from the exchange. Verify against official LBank values before live trading. The default rate is 12,000,000 / 45; if you meant rials, switch the unit or fix the rate."],
+  v_ok: ["تنظیمات معتبر است.", "Settings look valid."], v_lev: ["لورج انتخابی از حداکثر مجاز بیشتر است؛ ماشین‌حساب معامله را مسدود می‌کند.", "Selected leverage exceeds the max; the calculator will block trades."],
+  v_fx: ["نرخ تبدیل باید بزرگ‌تر از صفر باشد.", "FX rate must be greater than zero."], v_init: ["سرمایه اولیه باید بزرگ‌تر از صفر باشد.", "Initial equity must be greater than zero."],
+  v_risk: ["ریسک بیش از ۵٪ در هر معامله بسیار تهاجمی است.", "Risk above 5% per trade is very aggressive."], v_fee0: ["هر دو کارمزد صفر است؛ نتایج خوش‌بینانه خواهند بود.", "Both fees are zero; results will be optimistic."],
+  ERR_EQUITY: ["سرمایه نامعتبر است.", "Invalid equity."], ERR_ENTRY: ["قیمت ورود نامعتبر است.", "Invalid entry price."], ERR_LEV_MIN: ["لورج باید حداقل ۱ باشد.", "Leverage must be at least 1."],
+  ERR_LEV_CAP: ["لورج از حداکثر مجاز بیشتر است؛ معامله مسدود شد.", "Leverage exceeds the configured maximum; trade blocked."], ERR_COST: ["کارمزد/اسلیپیج نامعتبر یا منفی است.", "Fee/slippage is invalid or negative."],
+  ERR_STOP: ["فاصله یا قیمت SL نامعتبر است.", "Invalid SL distance/price."], ERR_STOP_SIDE: ["SL در سمت اشتباه است (لانگ: پایین‌تر از ورود، شورت: بالاتر).", "SL is on the wrong side (long: below entry, short: above)."],
+  ERR_TARGET: ["TP نامعتبر است.", "Invalid TP."], ERR_TARGET_SIDE: ["TP در سمت اشتباه است.", "TP is on the wrong side."], ERR_RR: ["نسبت R:R نامعتبر است.", "Invalid R:R."],
+  ERR_DD_HALT: ["حد دراودان کل فعال شد؛ معامله جدید مسدود است.", "Total drawdown limit reached; new trades are blocked."], ERR_RISK: ["ریسک نامعتبر است.", "Invalid risk."],
+  ERR_MARGIN: ["مارجین/لورج برای اندازه لازم کافی نیست (حالت مسدودسازی).", "Margin/leverage is insufficient for the required size (block mode)."],
+  ERR_MIN_QTY: ["حجم محاسبه‌شده کمتر از حداقل سفارش است؛ بدون افزایش ریسک امکان‌پذیر نیست.", "Computed size is below the minimum order; not possible without exceeding risk."],
+  ERR_DD_BUFFER: ["بافر باقی‌مانده دراودان برای حداقل سفارش کافی نیست؛ معامله جدید مسدود است.", "Remaining drawdown buffer cannot fund a minimum order; new trades are blocked."],
+  ERR_MIN_NOTIONAL: ["ارزش پوزیشن کمتر از حداقل ارزش سفارش است.", "Notional is below the minimum order value."],
+  ERR_STOP_BEYOND_LIQ: ["SL فراتر از قیمت لیکوییدیشن تخمینی است؛ معامله مسدود شد.", "SL lies beyond the estimated liquidation price; trade blocked."],
+  WARN_RISK_CLAMPED_DD: ["ریسک به بافر باقی‌مانده تا حد دراودان کاهش یافت.", "Risk was reduced to the buffer remaining before the drawdown limit."],
+  WARN_CAPPED_MARGIN: ["اندازه به‌خاطر سقف مارجین/لورج کاهش یافت؛ ریسک واقعی کمتر از ریسک تنظیمی است.", "Size was reduced by the margin/leverage cap; actual risk is below the configured risk."],
+  WARN_ROUNDING_BIG: ["گرد شدن حجم بیش از ۱۰٪ اندازه را کم کرد.", "Quantity rounding removed more than 10% of the size."],
+  WARN_NET_REWARD_NEG: ["ریوارد خالص بعد از هزینه‌ها صفر یا منفی است.", "Net reward after costs is zero or negative."],
+  WARN_RISK_OVER_BUDGET: ["ضرر خالص از بودجه ریسک بیشتر است (هزینه‌ها داخل ریسک نیستند).", "Net loss exceeds the risk budget (costs are not inside the risk)."],
+  WARN_LIQ_CLOSE: ["SL به قیمت لیکوییدیشن تخمینی نزدیک است.", "SL is close to the estimated liquidation price."],
+  WARN_BREACH_DD_FLOOR: ["ضرر این معامله می‌تواند سرمایه را زیر کف دراودان ببرد.", "This trade's loss could push equity below the drawdown floor."]
+};
+</script>
+<script>(function(){'use strict';/* app1.js — state, persistence, formatting, charts, account/journal math */
+var R = window.RRE, D = R.DEFAULTS;
+var UIDEF = { lang: 'fa', theme: 'dark', tab: 'overview', side: 'long', stopMode: 'pct', targetMode: 'rr',
+  stopPrice: '', targetPrice: '', calcEquity: '', planSide: 'alternate', anSource: 'journal',
+  jfSide: 'all', jfStatus: 'all', jfText: '' };
+var mem = {};
+function ld(k, def) { try { var v = localStorage.getItem('rrt.' + k); return v ? JSON.parse(v) : def; } catch (e) { return mem[k] !== undefined ? mem[k] : def; } }
+function sv(k, v) { try { localStorage.setItem('rrt.' + k, JSON.stringify(v)); } catch (e) { mem[k] = v; } }
+var S = Object.assign({}, D, UIDEF, ld('S', {}));
+var J = ld('J', []);
+var PL = ld('PL', []);
+var SIM = null;
+var TABS = ['overview', 'calc', 'planner', 'sim', 'analytics', 'journal', 'settings'];
+
+function $(s, el) { return (el || document).querySelector(s); }
+function $$(s, el) { return Array.prototype.slice.call((el || document).querySelectorAll(s)); }
+function T(k) { var p = window.I18N[k]; return p ? p[S.lang === 'fa' ? 0 : 1] : k; }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function isn(x) { return typeof x === 'number' && isFinite(x); }
+function f(x, d) { if (!isn(x)) return '—'; d = d == null ? 2 : d; return x.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+function usd(x, d) { return isn(x) ? (x < 0 ? '-' : '') + '$' + f(Math.abs(x), d == null ? 2 : d) : '—'; }
+function pc(x, d) { return isn(x) ? f(x, d == null ? 2 : d) + '%' : '—'; }
+function qtyF(x) { return isn(x) ? x.toFixed(Math.max(4, R.stepDecimals(+S.qtyStep || 0.0001))).replace(/0+$/, '').replace(/\.$/, '') : '—'; }
+function unitLbl() { return T(S.fxUnit === 'rial' ? 'u_rial' : 'u_toman'); }
+function loc(x) { return isn(x) && isn(+S.fxRate) ? Math.round(x * S.fxRate).toLocaleString('en-US') + ' ' + unitLbl() : '—'; }
+function both(x) { return '<span class="n">' + usd(x) + '</span><small class="loc n">≈ ' + loc(x) + '</small>'; }
+function toast(m) { var t = $('#toast'); t.textContent = m; t.className = 'show'; clearTimeout(toast.t); toast.t = setTimeout(function () { t.className = ''; }, 3200); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function todayStr() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+function saveAll() { sv('S', S); sv('J', J); sv('PL', PL); }
+
+/* ---------- builders ---------- */
+function tip(k) { return T(k) ? '<i class="tip-i" tabindex="0" title="' + esc(T(k)) + '" aria-label="' + esc(T(k)) + '">i</i>' : ''; }
+function field(k, o) {
+  o = o || {};
+  var lab = T(o.l || 'f_' + k), t = o.type || 'number', tp = o.tip ? tip(o.tip) : '';
+  var show = o.show ? ' data-show="' + o.show + '"' : '';
+  if (t === 'select') {
+    return '<label class="f"' + show + '><span>' + lab + tp + '</span><select data-k="' + k + '"' + (o.num ? ' data-num="1"' : '') + '>' +
+      o.opts.map(function (p) { return '<option value="' + p[0] + '">' + p[1] + '</option>'; }).join('') + '</select></label>';
+  }
+  if (t === 'check') return '<label class="f chk"' + show + '><input type="checkbox" data-k="' + k + '"><span>' + lab + tp + '</span></label>';
+  var extra = (o.min != null ? ' min="' + o.min + '"' : '') + (o.max != null ? ' max="' + o.max + '"' : '') + (o.ph ? ' placeholder="' + esc(o.ph) + '"' : '');
+  var inp = t === 'number' ? ' type="number" inputmode="decimal" step="' + (o.step || 'any') + '"' : ' type="text"';
+  return '<label class="f"' + show + '><span>' + lab + tp + '</span><input data-k="' + k + '"' + inp + extra + ' dir="ltr"></label>';
+}
+function seg(k, opts, show) {
+  return '<div class="seg" role="group" data-seg="' + k + '"' + (show ? ' data-show="' + show + '"' : '') + '>' +
+    opts.map(function (p) { return '<button type="button" data-v="' + p[0] + '">' + p[1] + '</button>'; }).join('') + '</div>';
+}
+function kpi(l, v, s, c) { return '<div class="kpi ' + (c || '') + '"><div class="kl">' + l + '</div><div class="kv">' + v + '</div><div class="ks">' + (s || '') + '</div></div>'; }
+function tr(l, v, c) { return '<tr class="' + (c || '') + '"><th scope="row">' + l + '</th><td class="n">' + v + '</td></tr>'; }
+function msgs(pos) {
+  var h = '';
+  (pos.errors || []).forEach(function (e) { h += '<li class="err">' + T(e) + '</li>'; });
+  (pos.warnings || []).forEach(function (w) { h += '<li class="warn">' + T(w) + '</li>'; });
+  return h ? '<ul class="msgs">' + h + '</ul>' : '';
+}
+function badge(st) { return '<span class="badge b-' + st + '">' + T('st_' + st) + '</span>'; }
+
+/* ---------- charts (inline SVG, no deps) ---------- */
+var CH = {};
+var CW = 640, CHH = 230, CL = 52, CR = 10, CT = 10, CB = 22;
+function lineChart(id, o) {
+  var ser = o.series || [], bands = o.bands || [], hl = o.hl || [], fm = o.fmt || function (v) { return f(v, 2); };
+  var all = [];
+  ser.forEach(function (s) { s.data.forEach(function (v) { if (isn(v)) all.push(v); }); });
+  bands.forEach(function (b) { b.lo.concat(b.hi).forEach(function (v) { if (isn(v)) all.push(v); }); });
+  hl.forEach(function (h) { if (isn(h.y)) all.push(h.y); });
+  if (!all.length) return '<div class="empty">' + T('empty') + '</div>';
+  var lo = Math.min.apply(null, all), hi = Math.max.apply(null, all);
+  if (o.zero) lo = Math.min(lo, 0);
+  if (lo === hi) { lo -= 1; hi += 1; }
+  var pv = (hi - lo) * 0.06; lo -= o.zero && lo === 0 ? 0 : pv; hi += pv;
+  var n = 0; ser.forEach(function (s) { n = Math.max(n, s.data.length); }); bands.forEach(function (b) { n = Math.max(n, b.lo.length); });
+  var X = function (i) { return CL + (n > 1 ? i / (n - 1) : 0) * (CW - CL - CR); };
+  var Y = function (v) { return CT + (1 - (v - lo) / (hi - lo)) * (CHH - CT - CB); };
+  var s = '<svg viewBox="0 0 ' + CW + ' ' + CHH + '" role="img" aria-label="' + esc(o.label || '') + '">';
+  for (var g = 0; g <= 4; g++) {
+    var gv = lo + (hi - lo) * g / 4, gy = Y(gv);
+    s += '<line class="gl" x1="' + CL + '" x2="' + (CW - CR) + '" y1="' + gy.toFixed(1) + '" y2="' + gy.toFixed(1) + '"/><text class="ax" x="' + (CL - 6) + '" y="' + (gy + 4).toFixed(1) + '" text-anchor="end">' + fm(gv) + '</text>';
+  }
+  for (var xt = 0; xt <= 4; xt++) {
+    var xi = Math.round((n - 1) * xt / 4);
+    s += '<text class="ax" x="' + X(xi).toFixed(1) + '" y="' + (CHH - 6) + '" text-anchor="middle">' + xi + '</text>';
+  }
+  bands.forEach(function (b) {
+    var d = 'M';
+    b.hi.forEach(function (v, i) { d += (i ? 'L' : '') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1); });
+    for (var i = b.lo.length - 1; i >= 0; i--) d += 'L' + X(i).toFixed(1) + ' ' + Y(b.lo[i]).toFixed(1);
+    s += '<path d="' + d + 'Z" fill="' + b.color + '" opacity="' + (b.op || 0.18) + '"/>';
+  });
+  hl.forEach(function (h) {
+    if (!isn(h.y)) return;
+    s += '<line x1="' + CL + '" x2="' + (CW - CR) + '" y1="' + Y(h.y).toFixed(1) + '" y2="' + Y(h.y).toFixed(1) + '" stroke="' + h.color + '" stroke-dasharray="5 4" stroke-width="1.2"/>' +
+      '<text class="ax" x="' + (CW - CR - 2) + '" y="' + (Y(h.y) - 4).toFixed(1) + '" text-anchor="end" fill="' + h.color + '">' + esc(h.label || '') + '</text>';
+  });
+  ser.forEach(function (sr, si) {
+    var d = '';
+    sr.data.forEach(function (v, i) { if (isn(v)) d += (d ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1); });
+    if (!d) return;
+    if (o.area) {
+      var gid = 'gd-' + id + '-' + si;
+      s += '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:' + sr.color + ';stop-opacity:.38"/><stop offset="1" style="stop-color:' + sr.color + ';stop-opacity:0"/></linearGradient></defs>' +
+        '<path d="' + d + 'L' + X(sr.data.length - 1).toFixed(1) + ' ' + Y(o.zero ? 0 : lo).toFixed(1) + 'L' + X(0).toFixed(1) + ' ' + Y(o.zero ? 0 : lo).toFixed(1) + 'Z" fill="url(#' + gid + ')"/>';
+    }
+    s += '<path d="' + d + '" fill="none" stroke="' + sr.color + '" stroke-width="' + (sr.w || 2) + '"' + (sr.dash ? ' stroke-dasharray="6 4"' : '') + ' stroke-linejoin="round"/>';
+  });
+  s += '<line class="cross" x1="0" x2="0" y1="' + CT + '" y2="' + (CHH - CB) + '" style="display:none"/></svg>';
+  CH[id] = { ser: ser, n: n, fm: fm, xl: o.xlabel || '#' };
+  var lg = ser.length > 1 || bands.length ? '<div class="legend">' + ser.map(function (q) { return '<span><i style="background:' + q.color + '"></i>' + esc(q.name || '') + '</span>'; }).join('') + '</div>' : '';
+  return '<div class="chart" data-ch="' + id + '">' + s + '<div class="tipbox" hidden></div></div>' + lg;
+}
+function barChart(bins, o) {
+  o = o || {};
+  var mx = Math.max.apply(null, bins.map(function (b) { return b.v; }).concat([1]));
+  var n = bins.length, bw = (CW - CL - CR) / n;
+  var s = '<svg viewBox="0 0 ' + CW + ' ' + CHH + '" role="img" aria-label="' + esc(o.label || '') + '">';
+  for (var g = 0; g <= 3; g++) {
+    var gy = CT + (1 - g / 3) * (CHH - CT - CB);
+    s += '<line class="gl" x1="' + CL + '" x2="' + (CW - CR) + '" y1="' + gy.toFixed(1) + '" y2="' + gy.toFixed(1) + '"/><text class="ax" x="' + (CL - 6) + '" y="' + (gy + 4).toFixed(1) + '" text-anchor="end">' + Math.round(mx * g / 3) + '</text>';
+  }
+  bins.forEach(function (b, i) {
+    var h = b.v / mx * (CHH - CT - CB), x = CL + i * bw;
+    s += '<rect x="' + (x + 1).toFixed(1) + '" y="' + (CHH - CB - h).toFixed(1) + '" width="' + Math.max(1, bw - 2).toFixed(1) + '" height="' + h.toFixed(1) + '" fill="' + b.c + '" rx="2"><title>' + esc(b.t) + ': ' + b.v + '</title></rect>';
+  });
+  [0, Math.floor((n - 1) / 2), n - 1].forEach(function (i) {
+    if (bins[i]) s += '<text class="ax" x="' + (CL + i * bw + bw / 2).toFixed(1) + '" y="' + (CHH - 6) + '" text-anchor="middle">' + esc(bins[i].l) + '</text>';
+  });
+  return '<div class="chart">' + s + '</svg></div>';
+}
+function histPnl(pnls) {
+  if (!pnls.length) return '<div class="empty">' + T('empty') + '</div>';
+  var lo = Math.min.apply(null, pnls), hi = Math.max.apply(null, pnls), nb = Math.min(12, Math.max(4, pnls.length));
+  if (lo === hi) { lo -= 0.5; hi += 0.5; }
+  var w = (hi - lo) / nb, bins = [];
+  for (var i = 0; i < nb; i++) { var a = lo + i * w; bins.push({ v: 0, l: f(a, 2), t: f(a, 2) + '…' + f(a + w, 2), c: (a + w / 2) >= 0 ? 'var(--g)' : 'var(--r)' }); }
+  pnls.forEach(function (p) { bins[Math.min(nb - 1, Math.floor((p - lo) / w))].v++; });
+  return barChart(bins, { label: T('c_dist') });
+}
+function ddSeries(curve) {
+  var pk = -Infinity;
+  return curve.map(function (v) { if (v > pk) pk = v; return pk > 0 ? -(pk - v) / pk * 100 : 0; });
+}
+
+/* ---------- journal / account math ---------- */
+function feeOf(type) { return (type === 'maker' ? +S.makerFeePct : +S.takerFeePct) / 100 || 0; }
+function hasV(v) { return v !== '' && v != null && !isNaN(+v); }
+function jCalc(r) {
+  var dir = r.side === 'short' ? -1 : 1, q = +r.qty || 0, en = +r.entry || 0, ex = +r.exit || 0;
+  var closed = ex > 0 && q > 0 && en > 0;
+  var gross = closed ? dir * (ex - en) * q : 0;
+  var estFees = (q * en * feeOf(S.entryType)) + (closed ? q * ex * (gross > 0 ? feeOf(S.tpType) : feeOf(S.slType)) : 0);
+  var fees = hasV(r.fees) ? +r.fees : estFees, fund = hasV(r.funding) ? +r.funding : 0;
+  var net = closed ? gross - fees - fund : 0;
+  return { closed: closed, gross: gross, fees: fees, feesEst: !hasV(r.fees), fund: fund, net: net,
+    res: !closed ? 'open' : net > 0 ? 'win' : net < 0 ? 'loss' : 'be',
+    rm: closed && +r.risk > 0 ? net / +r.risk : null,
+    margin: !closed && q && en && +r.leverage > 0 ? q * en / +r.leverage : 0, notional: !closed ? q * en : 0 };
+}
+function jRows() { return J.map(function (r) { return Object.assign({}, r, jCalc(r)); }); }
+function account() {
+  var rows = jRows(), init = +S.initialEquity || 0;
+  var closed = rows.filter(function (r) { return r.closed; }).sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : (a.id < b.id ? -1 : 1); });
+  var open = rows.filter(function (r) { return !r.closed; });
+  var pnls = closed.map(function (r) { return r.net; }), curve = [init];
+  pnls.forEach(function (p) { curve.push(curve[curve.length - 1] + p); });
+  var equity = curve[curve.length - 1], td = todayStr();
+  var pnlToday = closed.filter(function (r) { return r.date === td; }).reduce(function (a, r) { return a + r.net; }, 0);
+  var sum = function (arr, k) { return arr.reduce(function (a, r) { return a + (+r[k] || 0); }, 0); };
+  var usedMargin = sum(open, 'margin');
+  return { rows: rows, closed: closed, open: open, pnls: pnls, curve: curve, equity: equity, usedMargin: usedMargin,
+    free: equity - usedMargin, exposure: sum(open, 'notional'), openRisk: sum(open, 'risk'),
+    tradesToday: rows.filter(function (r) { return r.date === td; }).length, pnlToday: pnlToday,
+    dayStart: equity - pnlToday, consec: R.streaks(pnls).currentLoss };
+}
+function calcPos(a) {
+  var eq = +S.calcEquity > 0 ? +S.calcEquity : a.equity;
+  return R.computePosition(Object.assign({}, S, { equity: eq, freeBalance: +S.calcEquity > 0 ? eq : a.free, entry: S.entryPrice }));
+}
+function ensurePlan() {
+  var n = Math.min(500, Math.max(1, parseInt(S.planTrades, 10) || 30));
+  while (PL.length < n) PL.push({ side: R.sideFor(PL.length, S.planSide), outcome: 'pending', entry: '' });
+  if (PL.length > n) PL.length = n;
+}
+function planRun() { ensurePlan(); return R.runPlan(S, PL, { mode: S.compoundMode }); }
+
+/* app2.js — page construction and tab renderers */
+var MK = [['maker', ''], ['taker', '']];
+function ordOpts() { return [['maker', T('maker')], ['taker', T('taker')]]; }
+function sel(v, opts) { return opts.map(function (p) { return '<option value="' + p[0] + '"' + (String(p[0]) === String(v) ? ' selected' : '') + '>' + p[1] + '</option>'; }).join(''); }
+function sideOpts() { return [['long', T('long')], ['short', T('short')]]; }
+
+function buildAll() {
+  document.documentElement.lang = S.lang; document.documentElement.dir = S.lang === 'fa' ? 'rtl' : 'ltr';
+  document.documentElement.setAttribute('data-theme', S.theme);
+  document.title = T('title');
+  $('#ttl').textContent = T('title'); $('#sub').textContent = [S.exchange, S.pair, T(S.marginMode), T('subtitle')].join(' · '); $('#banner').textContent = T('banner');
+  $('#bLang').textContent = S.lang === 'fa' ? 'EN' : 'فارسی'; $('#bTheme').textContent = S.theme === 'dark' ? T('light') : T('dark');
+  var IC = {
+    overview: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+    calc: '<rect x="4" y="2.5" width="16" height="19" rx="2.5"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/>',
+    planner: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M3.5 6l1.2 1.2L7 4.8M3.5 12l1.2 1.2L7 10.8M3.5 18l1.2 1.2L7 16.8"/>',
+    sim: '<path d="M3 17c3 0 3-12 6-12s3 14 6 14 3-8 6-8"/><path d="M3 21h18"/>',
+    analytics: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+    journal: '<path d="M5 3h12a2 2 0 0 1 2 2v16H7a2 2 0 0 1-2-2V3z"/><path d="M9 8h6M9 12h6"/>',
+    settings: '<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/>'
+  };
+  $('#nav').innerHTML = TABS.map(function (t) { return '<button role="tab" data-tab="' + t + '" id="nt-' + t + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + IC[t] + '</svg><span>' + T('t_' + t) + '</span></button>'; }).join('');
+  var sec = function (id, inner) { return '<section id="tab-' + id + '" role="tabpanel" aria-labelledby="nt-' + id + '" hidden>' + inner + '</section>'; };
+  var planN = [[30, 30], [50, 50], [100, 100], [250, 250], [500, 500]];
+  var modeOpts = [['compound', T('m_compound')], ['fixed', T('m_fixed')]];
+  var sideModeOpts = [['alternate', T('alt')], ['long', T('long')], ['short', T('short')]];
+  var h = '';
+  h += sec('overview', '<div id="o-ov"></div>');
+  h += sec('calc', '<div class="cols"><div class="card" id="in-calc"><h2>' + T('h_inputs') + '</h2>' +
+    seg('side', [['long', T('long')], ['short', T('short')]]) +
+    field('entryPrice', { tip: 'tip_entry' }) + field('calcEquity', { ph: T('auto'), tip: 'tip_calcEquity' }) +
+    '<div class="row2">' + field('riskPct', { tip: 'tip_risk' }) + field('leverage', { tip: 'tip_lev' }) + '</div>' +
+    '<div class="lbl">' + T('f_stop') + '</div>' + seg('stopMode', [['pct', '%'], ['price', T('price')]]) +
+    field('stopPct', { show: 'stopMode=pct' }) + field('stopPrice', { show: 'stopMode=price' }) +
+    '<div class="lbl">' + T('f_target') + '</div>' + seg('targetMode', [['rr', 'R:R'], ['pct', '%'], ['price', T('price')]]) +
+    field('rr', { show: 'targetMode=rr' }) + field('targetPct', { show: 'targetMode=pct' }) + field('targetPrice', { show: 'targetMode=price' }) +
+    '<div class="lbl">' + T('h_exec') + '</div><div class="row3">' +
+    field('entryType', { type: 'select', opts: ordOpts() }) + field('tpType', { type: 'select', opts: ordOpts() }) + field('slType', { type: 'select', opts: ordOpts() }) + '</div>' +
+    field('holdHours', { tip: 'tip_hold' }) + '</div><div id="o-calc"></div></div>');
+  h += sec('planner', '<div class="card"><div class="row4">' +
+    field('planTrades', { type: 'select', opts: planN, num: 1 }) + field('compoundMode', { type: 'select', opts: modeOpts }) +
+    field('planSide', { type: 'select', opts: sideModeOpts }) + field('winRatePct') + field('seed', { step: 1 }) + '</div>' +
+    '<div class="btns"><button class="btn" data-act="fillEven">' + T('b_fillEven') + '</button><button class="btn" data-act="fillRand">' + T('b_fillRand') + '</button>' +
+    '<button class="btn" data-act="clearPlan">' + T('b_clearPlan') + '</button><button class="btn" data-act="resetSides">' + T('b_resetSides') + '</button>' +
+    '<button class="btn pri" data-act="exportPlan">' + T('b_exportPlan') + '</button></div></div><div id="o-pl"></div>');
+  h += sec('sim', '<div class="card"><div class="row4">' + field('winRatePct') + field('mcPaths', { step: 100, min: 100, max: 20000 }) + field('seed', { step: 1 }) +
+    field('planTrades', { type: 'select', opts: planN, num: 1 }) + field('compoundMode', { type: 'select', opts: modeOpts }) + field('planSide', { type: 'select', opts: sideModeOpts }) + '</div>' +
+    '<div class="btns"><button class="btn pri" data-act="runSim">' + T('b_runSim') + '</button></div></div><div id="o-sim"></div>');
+  h += sec('analytics', '<div class="card"><div class="row3">' +
+    field('anSource', { type: 'select', opts: [['journal', T('src_journal')], ['planner', T('src_planner')]] }) + field('winRatePct') + '</div></div><div id="o-an"></div>');
+  h += sec('journal', '<div class="card"><div class="btns"><button class="btn pri" data-act="addTrade">' + T('b_addTrade') + '</button>' +
+    '<button class="btn" data-act="exportJ">' + T('b_exportJ') + '</button><button class="btn danger" data-act="clearJ">' + T('b_clearJ') + '</button></div>' +
+    '<div class="row3">' + field('jfSide', { type: 'select', opts: [['all', T('all')], ['long', T('long')], ['short', T('short')]] }) +
+    field('jfStatus', { type: 'select', opts: [['all', T('all')], ['open', T('res_open')], ['closed', T('closed')]] }) + field('jfText', { type: 'text' }) + '</div></div><div id="o-jr"></div>');
+  h += sec('settings', '<div class="cols3">' +
+    '<div class="card"><h2>' + T('h_account') + '</h2>' + field('initialEquity') +
+    '<label class="f"><span>' + T('f_capLocal') + ' (' + unitLbl() + ')' + tip('tip_fx') + '</span><input data-sp="capLocal" type="number" inputmode="decimal" step="any" dir="ltr"></label>' +
+    field('fxRate', { tip: 'tip_fx' }) + field('fxUnit', { type: 'select', opts: [['toman', T('u_toman')], ['rial', T('u_rial')]] }) + field('fxStamp', { type: 'text', ph: T('ph_fxStamp') }) +
+    field('exchange', { type: 'text' }) + field('pair', { type: 'text' }) + field('marginMode', { type: 'select', opts: [['isolated', T('isolated')]] }) +
+    '</div><div class="card"><h2>' + T('h_risk') + '</h2>' + field('riskPct') + field('maxLeverage') + field('leverage') + field('maxDrawdownPct') + field('rr') + field('stopPct') + field('targetPct') +
+    field('maxDailyTrades', { step: 1 }) + field('maxDailyLossPct') + field('maxConsecLosses', { step: 1, tip: 'tip_consec' }) +
+    '</div><div class="card"><h2>' + T('h_costs') + '</h2>' + field('makerFeePct') + field('takerFeePct') + field('slippagePct') +
+    field('fundingRatePct') + field('fundingIntervalH') + field('holdHours') +
+    '<h2>' + T('h_specs') + '</h2>' + field('qtyStep', { tip: 'tip_specs' }) + field('minQty') + field('minNotional') + field('mmrPct', { tip: 'tip_mmr' }) +
+    '<h2>' + T('h_opts') + '</h2>' + field('costsInRisk', { type: 'check', tip: 'tip_costsInRisk' }) +
+    field('capMode', { type: 'select', opts: [['cap', T('cap_cap')], ['block', T('cap_block')]], tip: 'tip_capMode' }) +
+    '<div class="btns"><button class="btn danger" data-act="resetDefaults">' + T('b_reset') + '</button></div></div></div><div id="o-st"></div>');
+  $('#main').innerHTML = h;
+}
+
+/* ---------- Overview ---------- */
+function guardState(a) {
+  return R.checkGuards(S, { equity: a.equity, initialEquity: +S.initialEquity, tradesToday: a.tradesToday, pnlToday: a.pnlToday, dayStartEquity: a.dayStart, consecLosses: a.consec });
+}
+function floorLines(floor) { return [{ y: +S.initialEquity, color: 'var(--m)', label: T('k_initial') }, { y: floor, color: 'var(--r)', label: T('k_floor') }]; }
+function renderOverview() {
+  var a = account(), pos = calcPos(a), init = +S.initialEquity, floor = init * (1 - S.maxDrawdownPct / 100);
+  var ddI = Math.max(0, (init - a.equity) / init * 100), use = Math.min(100, ddI / S.maxDrawdownPct * 100);
+  var pk = Math.max.apply(null, a.curve), ddP = pk > 0 ? (pk - a.equity) / pk * 100 : 0;
+  var eff = a.equity > 0 ? a.exposure / a.equity : 0, g = guardState(a), plan = planRun();
+  var chg = (a.equity / init - 1) * 100;
+  var h = '<div class="note">' + T('src_note') + '</div><div class="kpis">' +
+    kpi(T('k_initial'), both(init), T('k_initial_s')) +
+    kpi(T('k_equity'), both(a.equity), '<span class="' + (chg >= 0 ? 'pos' : 'neg') + ' n">' + (chg >= 0 ? '+' : '') + pc(chg) + '</span>') +
+    kpi(T('k_free'), both(a.free)) + kpi(T('k_margin'), both(a.usedMargin)) +
+    kpi(T('k_exposure'), '<span class="n">' + usd(a.exposure) + '</span>', '<span class="n ' + (eff > S.maxLeverage ? 'neg' : '') + '">' + f(eff, 2) + 'x / ' + f(+S.maxLeverage, 1) + 'x</span>') +
+    kpi(T('k_openrisk'), '<span class="n">' + usd(a.openRisk) + '</span>', '<span class="n">' + pc(a.equity > 0 ? a.openRisk / a.equity * 100 : NaN) + '</span>') +
+    kpi(T('k_dd'), '<span class="n">' + pc(ddI) + '</span>', '<div class="meter"><i style="width:' + use + '%" class="' + (use > 80 ? 'hi' : '') + '"></i></div><span class="n">' + T('k_limit') + ' ' + pc(+S.maxDrawdownPct, 1) + ' · ' + T('k_peak') + ' ' + pc(ddP) + '</span>') +
+    kpi(T('k_floor'), both(floor), T('k_floor_s')) +
+    kpi(T('k_today'), '<span class="n">' + a.tradesToday + ' / ' + S.maxDailyTrades + '</span>', '<span class="n">' + usd(a.pnlToday) + '</span>') + '</div>';
+  h += '<div class="card ' + (g.allowed ? 'ok' : 'bad') + '"><h2>' + T('h_guard') + '</h2>' +
+    (g.allowed ? '<p class="pos">' + T('guard_ok') + '</p>' : '<ul class="msgs">' + g.reasons.map(function (r) { return '<li class="err">' + T(r) + '</li>'; }).join('') + '</ul>') + '</div>';
+  h += '<div class="card"><h2>' + T('h_next') + ' ' + badge(pos.status || 'blocked') + '</h2>';
+  if (isn(pos.slPrice)) h += '<div class="kpis sm">' + kpi(T('r_qty'), '<span class="n">' + qtyF(pos.qty) + ' BTC</span>') + kpi(T('r_notional'), '<span class="n">' + usd(pos.notional) + '</span>') +
+    kpi(T('r_margin'), '<span class="n">' + usd(pos.margin) + '</span>') + kpi(T('r_netloss'), '<span class="n neg">' + usd(pos.netLoss) + '</span>') + kpi(T('r_netwin'), '<span class="n pos">' + usd(pos.netWin) + '</span>') + '</div>';
+  h += msgs(pos) + '</div>';
+  h += '<div class="cols"><div class="card"><h2>' + T('c_equity_actual') + '</h2>' +
+    lineChart('ov1', { series: [{ name: T('k_equity'), color: 'var(--ac)', data: a.curve }], hl: floorLines(floor), area: true, label: T('c_equity_actual') }) + '</div>' +
+    '<div class="card"><h2>' + T('c_equity_plan') + '</h2>' +
+    lineChart('ov2', { series: [{ name: T('k_equity'), color: 'var(--bl)', data: plan.curve }], hl: floorLines(floor), area: true, label: T('c_equity_plan') }) + '</div></div>';
+  $('#o-ov').innerHTML = h;
+}
+
+/* ---------- Calculator ---------- */
+function renderCalc() {
+  var a = account(), pos = calcPos(a), h = '';
+  h += '<div class="card"><h2>' + T('h_result') + ' ' + badge(pos.status || 'blocked') + ' <span class="est">' + T('estimate') + '</span></h2>' + msgs(pos);
+  if (isn(pos.slPrice)) {
+    var tot = pos.netLoss + Math.max(pos.netWin, 0), lw = tot > 0 ? pos.netLoss / tot * 100 : 50;
+    h += '<div class="rbar" aria-label="risk reward"><span class="rl" style="width:' + lw.toFixed(1) + '%">' + usd(pos.netLoss) + '</span><span class="rw" style="width:' + (100 - lw).toFixed(1) + '%">' + usd(pos.netWin) + '</span></div>';
+    h += '<div class="cols"><table class="tbl"><caption>' + T('h_sizing') + '</caption>' +
+      tr(T('r_side'), T(pos.side)) + tr(T('r_entry'), f(pos.entry, 2)) +
+      tr(T('r_sl'), '<span class="neg">' + f(pos.slPrice, 2) + '</span> (' + pc(pos.stopPct) + ')') +
+      tr(T('r_tp'), '<span class="pos">' + f(pos.tpPrice, 2) + '</span> (' + pc(pos.targetPct) + ')') +
+      tr(T('r_qty'), qtyF(pos.qty) + ' BTC') + tr(T('r_qty_raw'), isn(pos.qtyUncapped) ? pos.qtyUncapped.toFixed(8) + ' BTC' : '—') +
+      tr(T('r_notional'), both(pos.notional)) + tr(T('r_margin'), both(pos.margin)) +
+      tr(T('r_efflev'), f(pos.effLeverage, 2) + 'x / ' + f(+S.maxLeverage, 1) + 'x') +
+      tr(T('r_liq'), f(pos.liqPrice, 2) + ' (' + pc(pos.liqDistPct) + ')') + '</table>' +
+      '<table class="tbl"><caption>' + T('h_rr') + '</caption>' +
+      tr(T('r_budget'), both(pos.riskBudget)) +
+      tr(T('r_grossrisk'), usd(pos.grossRisk, 4)) + tr(T('r_feeloss'), usd(pos.fees.entry + pos.fees.sl, 4)) + tr(T('r_slip'), usd(pos.slippage.entry + pos.slippage.sl, 4)) + tr(T('r_fund'), usd(pos.funding, 4)) +
+      tr(T('r_netloss'), '<b class="neg">' + usd(pos.netLoss, 4) + '</b> · ' + loc(pos.netLoss), 'sum') +
+      tr(T('r_grossreward'), usd(pos.grossReward, 4)) + tr(T('r_feewin'), usd(pos.fees.entry + pos.fees.tp, 4)) + tr(T('r_slip'), usd(pos.slippage.entry + pos.slippage.tp, 4)) + tr(T('r_fund'), usd(pos.funding, 4)) +
+      tr(T('r_netwin'), '<b class="pos">' + usd(pos.netWin, 4) + '</b> · ' + loc(pos.netWin), 'sum') +
+      tr(T('r_rrg'), '1 : ' + f(pos.rrGross, 2)) + tr(T('r_rrn'), '1 : ' + f(pos.netRR, 2)) + tr(T('r_be'), pc(pos.breakevenWR)) + tr(T('r_riskpct'), pc(pos.riskPctEquity, 3)) + '</table></div>';
+    h += '<div class="btns"><button class="btn pri" data-act="saveCalc"' + (pos.ok ? '' : ' disabled') + '>' + T('b_saveCalc') + '</button></div>';
+  }
+  h += '</div>';
+  if (isn(pos.notional) && pos.notional > 0) {
+    var N = pos.notional, mk = +S.makerFeePct / 100, tk = +S.takerFeePct / 100, sc = [['maker', 'maker', mk, mk], ['maker', 'taker', mk, tk], ['taker', 'maker', tk, mk], ['taker', 'taker', tk, tk]];
+    h += '<div class="cols"><div class="card"><h2>' + T('h_fees') + '</h2><div class="tw"><table class="tbl"><thead><tr><th>' + T('f_entryType') + ' → ' + T('f_tpType') + '</th><th>%</th><th>USDT</th><th>' + unitLbl() + '</th></tr></thead><tbody>' +
+      sc.map(function (s) { var p = (s[2] + s[3]) * 100, u = N * (s[2] + s[3]); return '<tr><td>' + T(s[0]) + ' → ' + T(s[1]) + '</td><td class="n">' + f(p, 3) + '</td><td class="n">' + f(u, 4) + '</td><td class="n">' + f(u * S.fxRate, 0) + '</td></tr>'; }).join('') +
+      '</tbody></table></div></div><div class="card"><h2>' + T('h_funding') + '</h2><div class="tw"><table class="tbl"><thead><tr><th>' + T('f_holdHours') + '</th><th>USDT</th><th>%</th></tr></thead><tbody>' +
+      [8, 16, 24, 48, 72].map(function (hh) { var fr = R.fundingFraction(S.side, +S.fundingRatePct, hh, +S.fundingIntervalH); return '<tr><td class="n">' + hh + 'h</td><td class="n">' + usd(N * fr, 4) + '</td><td class="n">' + f(fr * 100, 4) + '</td></tr>'; }).join('') +
+      '</tbody></table></div><p class="muted">' + T('fund_note') + '</p></div></div>';
+  }
+  $('#o-calc').innerHTML = h;
+}
+
+/* ---------- Planner ---------- */
+function fKey() { var e = document.activeElement; if (e && e.dataset && e.dataset.pl !== undefined) return '[data-pl="' + e.dataset.pl + '"][data-f="' + e.dataset.f + '"]'; return null; }
+function fRestore(k) { if (k) { var n = $(k); if (n) n.focus(); } }
+function renderPlanner() {
+  var fk = fKey(), p = planRun(), s = p.summary, init = +S.initialEquity;
+  var h = '<div class="kpis">' + kpi(T('p_final'), both(s.finalEquity), '<span class="n ' + (s.returnPct >= 0 ? 'pos' : 'neg') + '">' + (s.returnPct >= 0 ? '+' : '') + pc(s.returnPct) + '</span>') +
+    kpi(T('p_net'), '<span class="n">' + usd(s.netPnl) + '</span>', '<span class="n">' + T('p_costs') + ': ' + usd(s.costs) + '</span>') +
+    kpi(T('k_dd'), '<span class="n">' + pc(s.maxDDPct) + '</span>', '<span class="n">' + T('k_limit') + ' ' + pc(+S.maxDrawdownPct, 1) + '</span>') +
+    kpi(T('p_wl'), '<span class="n">' + s.wins + ' / ' + s.losses + '</span>', '<span class="n">' + pc(s.winRate, 1) + '</span>') +
+    kpi(T('p_days'), '<span class="n">' + s.days + '</span>', '<span class="n">' + s.executed + ' ' + T('p_executed') + '</span>') +
+    kpi(T('p_state'), p.halted ? '<span class="neg">' + T('p_halted') + '</span>' : '<span class="pos">' + T('p_active') + '</span>', T('p_state_s')) + '</div>';
+  h += '<div class="cols"><div class="card"><h2>' + T('c_equity_plan') + '</h2>' + lineChart('pl1', { series: [{ name: T('k_equity'), color: 'var(--ac)', data: p.curve }], hl: floorLines(p.floor), area: true, label: T('c_equity_plan') }) + '</div>' +
+    '<div class="card"><h2>' + T('c_dd') + '</h2>' + lineChart('pl2', { series: [{ name: '%', color: 'var(--r)', data: ddSeries(p.curve) }], area: true, zero: true, fmt: function (v) { return f(v, 1) + '%'; }, label: T('c_dd') }) + '</div></div>';
+  h += '<div class="card"><h2>' + T('h_planner') + '</h2><div class="tw tall"><table class="tbl plan"><thead><tr>' +
+    ['#', T('p_day'), T('r_side'), T('p_outcome'), T('r_entry'), T('r_qty'), T('r_notional'), T('r_margin'), T('p_risk'), T('p_reward'), T('p_pnl'), T('p_eq'), T('p_ddp'), T('p_status')].map(function (x) { return '<th>' + x + '</th>'; }).join('') + '</tr></thead><tbody>';
+  var oo = [['pending', T('o_pending')], ['win', T('o_win')], ['loss', T('o_loss')], ['skip', T('o_skip')]];
+  p.rows.forEach(function (r, i) {
+    var cell = function (v, fn) { return '<td class="n">' + (v == null ? '' : fn(v)) + '</td>'; };
+    var wr = (r.warnings || []).concat(r.errors || []).map(function (c) { return T(c); }).join(' | ');
+    h += '<tr class="r-' + r.status + '"><td class="n">' + r.i + '</td><td class="n">' + (r.day || '') + '</td>' +
+      '<td><select data-pl="' + i + '" data-f="side">' + sel(PL[i].side, sideOpts()) + '</select></td>' +
+      '<td><select data-pl="' + i + '" data-f="outcome">' + sel(PL[i].outcome, oo) + '</select></td>' +
+      '<td><input data-pl="' + i + '" data-f="entry" type="number" step="any" dir="ltr" placeholder="' + esc(S.entryPrice) + '" value="' + esc(PL[i].entry) + '"></td>' +
+      cell(r.qty, qtyF) + cell(r.notional, function (v) { return f(v, 2); }) + cell(r.margin, function (v) { return f(v, 2); }) +
+      cell(r.risk, function (v) { return f(v, 3); }) + cell(r.reward, function (v) { return f(v, 3); }) +
+      '<td class="n ' + (r.pnl > 0 ? 'pos' : r.pnl < 0 ? 'neg' : '') + '">' + (r.pnl == null ? '' : f(r.pnl, 3)) + '</td>' +
+      '<td class="n">' + f(r.eqAfter, 2) + '</td><td class="n">' + (r.ddPeakPct == null ? '' : f(r.ddPeakPct, 2)) + '</td>' +
+      '<td title="' + esc(wr) + '">' + T('ps_' + r.status) + (wr ? ' ⚠' : '') + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  $('#o-pl').innerHTML = h; fRestore(fk);
+}
+
+/* ---------- Simulator ---------- */
+function runSim() {
+  var o = $('#o-sim'); o.insertAdjacentHTML('afterbegin', '<div class="note" id="simwait">' + T('sim_wait') + '</div>');
+  setTimeout(function () {
+    var a = account(), t0 = Date.now();
+    SIM = R.monteCarlo(Object.assign({}, S, { entry: S.entryPrice }), { paths: Math.min(20000, Math.max(100, parseInt(S.mcPaths, 10) || 2000)), trades: parseInt(S.planTrades, 10) || 30, winRatePct: +S.winRatePct, mode: S.compoundMode, seed: parseInt(S.seed, 10) || 1, sideMode: S.planSide });
+    SIM.ms = Date.now() - t0; renderSim();
+  }, 30);
+}
+function renderSim() {
+  var a = account(), pos = calcPos(a), n = parseInt(S.planTrades, 10) || 30, init = +S.initialEquity, floor = init * (1 - S.maxDrawdownPct / 100);
+  var h = '<div class="note">' + T('sim_disc') + '</div>';
+  var nrr = isn(pos.netRR) ? pos.netRR : +S.rr;
+  var th = isn(pos.netWin) && pos.netLoss > 0 ? R.theoretical(+S.winRatePct, pos.netWin, pos.netLoss) : null;
+  var gp = R.growthProjection({ initial: init, riskPct: +S.riskPct, netRR: nrr, winRatePct: +S.winRatePct, n: n });
+  h += '<div class="cols"><div class="card"><h2>' + T('h_growth') + '</h2>' + lineChart('gr', { series: [
+    { name: T('g_comp'), color: 'var(--bl)', data: gp.expectedCompound }, { name: T('g_fixed'), color: 'var(--a)', data: gp.expectedFixed }, { name: T('g_typ'), color: 'var(--g)', data: gp.typicalGeometric, dash: true }], hl: floorLines(floor), label: T('h_growth') }) +
+    '<p class="muted">' + T('g_note') + '</p></div>' +
+    '<div class="card"><h2>' + T('h_expect') + '</h2>' + (th ? '<table class="tbl">' + tr(T('x_exp'), usd(th.expectancy, 4)) + tr(T('x_expr'), f(th.expectancyR, 3) + ' R') + tr(T('r_be'), pc(th.breakevenWR)) + tr(T('x_pf'), isFinite(th.profitFactor) ? f(th.profitFactor, 2) : '∞') +
+      tr(T('x_mean'), pc(gp.meanPerTrade * 100, 3)) + tr(T('x_log'), pc(gp.logGrowth * 100, 3)) + tr(T('x_end'), usd(gp.expectedCompound[n]) + ' / ' + usd(gp.expectedFixed[n])) + '</table>' : '<p class="muted">' + T('x_na') + '</p>') + '</div></div>';
+  if (!SIM) h += '<div class="card empty">' + T('sim_empty') + '</div>';
+  else {
+    var m = SIM, p = m.pct;
+    h += '<div class="kpis">' + kpi(T('s_median'), both(p.p50), '<span class="n">' + pc((p.p50 / init - 1) * 100) + '</span>') +
+      kpi(T('s_pprofit'), '<span class="n">' + pc(m.probProfit, 1) + '</span>') +
+      kpi(T('s_phalt'), '<span class="n ' + (m.probHalt > 20 ? 'neg' : '') + '">' + pc(m.probHalt, 1) + '</span>', T('s_phalt_s')) +
+      kpi(T('s_mdd'), '<span class="n">' + pc(m.medianMaxDD) + '</span>', '<span class="n">P95: ' + pc(m.p95MaxDD) + '</span>') +
+      kpi(T('s_streak'), '<span class="n">' + f(m.medianLossStreak, 0) + '</span>', '<span class="n">max: ' + m.maxLossStreak + '</span>') + '</div>';
+    h += '<div class="cols"><div class="card"><h2>' + T('h_fan') + '</h2>' + lineChart('fan', { series: [{ name: 'P50', color: 'var(--ac)', data: m.bands.p50 }], bands: [
+      { lo: m.bands.p5, hi: m.bands.p95, color: 'var(--bl)', op: 0.13 }, { lo: m.bands.p25, hi: m.bands.p75, color: 'var(--bl)', op: 0.25 }], hl: floorLines(floor), label: T('h_fan') }) +
+      '<p class="muted">' + T('fan_note') + '</p></div><div class="card"><h2>' + T('h_hist') + '</h2>' +
+      barChart(m.hist.map(function (b) { var mid = (b.from + b.to) / 2; return { v: b.count, l: f(b.from, 1), t: f(b.from, 2) + '…' + f(b.to, 2), c: mid < floor ? 'var(--r)' : mid < init ? 'var(--a)' : 'var(--g)' }; }), { label: T('h_hist') }) + '</div></div>';
+    h += '<div class="card"><div class="tw"><table class="tbl"><thead><tr><th></th><th>P5</th><th>P25</th><th>P50</th><th>P75</th><th>P95</th><th>' + T('s_mean') + '</th></tr></thead><tbody><tr><th scope="row">USDT</th>' +
+      [p.p5, p.p25, p.p50, p.p75, p.p95, m.mean].map(function (v) { return '<td class="n">' + f(v, 2) + '</td>'; }).join('') + '</tr><tr><th scope="row">' + unitLbl() + '</th>' +
+      [p.p5, p.p25, p.p50, p.p75, p.p95, m.mean].map(function (v) { return '<td class="n">' + f(v * S.fxRate, 0) + '</td>'; }).join('') + '</tr></tbody></table></div>' +
+      '<p class="muted n">' + T('s_params') + ': ' + m.paths + ' · ' + m.trades + ' · WR ' + f(m.winRatePct, 1) + '% · ' + T('m_' + m.mode) + ' · seed ' + m.seed + ' · ' + m.ms + ' ms · ' + T('s_skipped') + ': ' + m.skippedTrades + '</p></div>';
+  }
+  $('#o-sim').innerHTML = h;
+}
+
+/* ---------- Analytics ---------- */
+function renderAnalytics() {
+  var a = account(), p = planRun(), pl = S.anSource === 'planner';
+  var pnls = pl ? p.pnls : a.pnls, curve = pl ? p.curve : a.curve, an = R.analyze(pnls, curve), floor = +S.initialEquity * (1 - S.maxDrawdownPct / 100);
+  var h = '';
+  if (!an.n) h += '<div class="card empty">' + T('an_empty') + '</div>';
+  else {
+    h += '<div class="kpis">' + kpi(T('an_n'), '<span class="n">' + an.n + '</span>', '<span class="n">' + an.wins + ' W / ' + an.losses + ' L</span>') +
+      kpi(T('x_wr'), '<span class="n">' + pc(an.winRate, 1) + '</span>') + kpi(T('an_net'), '<span class="n ' + (an.net >= 0 ? 'pos' : 'neg') + '">' + usd(an.net) + '</span>', '<span class="n">' + loc(an.net) + '</span>') +
+      kpi(T('an_avgw'), '<span class="n pos">' + usd(an.avgWin, 3) + '</span>') + kpi(T('an_avgl'), '<span class="n neg">' + usd(an.avgLoss, 3) + '</span>', '<span class="n">' + T('an_payoff') + ': ' + f(an.payoff, 2) + '</span>') +
+      kpi(T('x_exp'), '<span class="n">' + usd(an.expectancy, 4) + '</span>', '<span class="n">' + f(an.expectancyR, 3) + ' R</span>') +
+      kpi(T('x_pf'), '<span class="n">' + (isFinite(an.profitFactor) ? f(an.profitFactor, 2) : '∞') + '</span>') +
+      kpi(T('k_dd'), '<span class="n">' + pc(an.maxDDPct) + '</span>', '<span class="n">' + usd(an.maxDDUsd) + '</span>') +
+      kpi(T('s_streak'), '<span class="n">' + an.streaks.maxLoss + '</span>', '<span class="n">W: ' + an.streaks.maxWin + '</span>') + '</div>';
+    h += '<div class="cols"><div class="card"><h2>' + T('c_equity') + '</h2>' + lineChart('an1', { series: [{ name: T('k_equity'), color: 'var(--ac)', data: curve }], hl: floorLines(floor), area: true, label: T('c_equity') }) + '</div>' +
+      '<div class="card"><h2>' + T('c_dd') + '</h2>' + lineChart('an2', { series: [{ name: '%', color: 'var(--r)', data: ddSeries(curve) }], area: true, zero: true, fmt: function (v) { return f(v, 1) + '%'; }, label: T('c_dd') }) + '</div></div>';
+    h += '<div class="card"><h2>' + T('c_dist') + '</h2>' + histPnl(pnls) + '</div>';
+  }
+  var pos = calcPos(a), th = isn(pos.netWin) && pos.netLoss > 0 ? R.theoretical(+S.winRatePct, pos.netWin, pos.netLoss) : null;
+  h += '<div class="card"><h2>' + T('h_expect') + ' (' + T('estimate') + ')</h2>' + (th ?
+    '<table class="tbl">' + tr(T('x_wr'), pc(+S.winRatePct, 1)) + tr(T('r_netwin') + ' / ' + T('r_netloss'), usd(pos.netWin, 4) + ' / ' + usd(pos.netLoss, 4)) + tr(T('x_exp'), '<b class="' + (th.expectancy >= 0 ? 'pos' : 'neg') + '">' + usd(th.expectancy, 4) + '</b>') +
+    tr(T('x_expr'), f(th.expectancyR, 3) + ' R') + tr(T('r_be'), pc(th.breakevenWR)) + tr(T('x_pf'), isFinite(th.profitFactor) ? f(th.profitFactor, 2) : '∞') + '</table>' : '<p class="muted">' + T('x_na') + '</p>') + '</div>';
+  $('#o-an').innerHTML = h;
+}
+
+/* ---------- Journal ---------- */
+function jCellsHtml(c) {
+  return { net: c.closed ? '<span class="' + (c.net > 0 ? 'pos' : c.net < 0 ? 'neg' : '') + '">' + f(c.net, 4) + '</span>' : '—',
+    res: '<span class="badge r-' + c.res + '">' + T('res_' + c.res) + '</span>', r: c.rm == null ? '—' : f(c.rm, 2) + 'R' };
+}
+function jRowHtml(r) {
+  var c = jCalc(r), id = r.id, x = jCellsHtml(c);
+  var inp = function (k, ph) { return '<input data-j="' + id + '" data-f="' + k + '" type="number" step="any" inputmode="decimal" dir="ltr" value="' + esc(r[k] == null ? '' : r[k]) + '"' + (ph ? ' placeholder="' + ph + '"' : '') + '>'; };
+  return '<tr data-id="' + id + '"><td><input data-j="' + id + '" data-f="date" type="date" value="' + esc(r.date) + '"></td>' +
+    '<td><select data-j="' + id + '" data-f="side">' + sel(r.side, sideOpts()) + '</select></td>' +
+    '<td>' + inp('entry') + '</td><td>' + inp('stop') + '</td><td>' + inp('target') + '</td><td>' + inp('qty') + '</td><td>' + inp('leverage') + '</td><td>' + inp('exit') + '</td>' +
+    '<td>' + inp('fees', T('est')) + '</td><td>' + inp('funding', '0') + '</td><td>' + inp('risk') + '</td>' +
+    '<td class="n" data-c="net">' + x.net + '</td><td data-c="res">' + x.res + '</td><td class="n" data-c="r">' + x.r + '</td>' +
+    '<td><input data-j="' + id + '" data-f="notes" type="text" value="' + esc(r.notes) + '"></td>' +
+    '<td><button class="btn sm danger" data-del="' + id + '" aria-label="' + T('del') + '">✕</button></td></tr>';
+}
+function jFiltered() {
+  var q = String(S.jfText || '').toLowerCase();
+  return J.filter(function (r) {
+    var c = jCalc(r);
+    return (S.jfSide === 'all' || r.side === S.jfSide) && (S.jfStatus === 'all' || (S.jfStatus === 'closed') === c.closed) && (!q || String(r.notes || '').toLowerCase().indexOf(q) >= 0);
+  });
+}
+function jSummaryHtml() {
+  var a = account(), an = R.analyze(a.pnls, a.curve);
+  return '<div class="kpis sm">' + kpi(T('an_n'), '<span class="n">' + J.length + '</span>', '<span class="n">' + a.closed.length + ' ' + T('closed') + ' · ' + a.open.length + ' ' + T('res_open') + '</span>') +
+    kpi(T('an_net'), '<span class="n ' + (an.net >= 0 ? 'pos' : 'neg') + '">' + usd(an.net) + '</span>', '<span class="n">' + loc(an.net) + '</span>') +
+    kpi(T('x_wr'), '<span class="n">' + pc(an.winRate, 1) + '</span>') + kpi(T('k_equity'), '<span class="n">' + usd(a.equity) + '</span>') + '</div>';
+}
+function renderJournal() {
+  var rows = jFiltered(), h = '<div id="jsum">' + jSummaryHtml() + '</div><div class="note">' + T('j_note') + '</div>';
+  if (!J.length) h += '<div class="card empty">' + T('j_empty') + '</div>';
+  else h += '<div class="card"><div class="tw tall"><table class="tbl jt"><thead><tr>' +
+    [T('j_date'), T('r_side'), T('r_entry'), T('r_sl'), T('r_tp'), T('r_qty'), T('f_leverage'), T('j_exit'), T('j_fees'), T('j_funding'), T('j_risk'), T('p_pnl'), T('j_result'), 'R', T('j_notes'), ''].map(function (x) { return '<th>' + x + '</th>'; }).join('') +
+    '</tr></thead><tbody>' + rows.map(jRowHtml).join('') + '</tbody></table></div></div>';
+  $('#o-jr').innerHTML = h;
+}
+function refreshJournalRow(id) {
+  var r = J.filter(function (x) { return x.id === id; })[0], tr0 = $('tr[data-id="' + id + '"]'); if (!r || !tr0) return;
+  var x = jCellsHtml(jCalc(r));
+  $('[data-c="net"]', tr0).innerHTML = x.net; $('[data-c="res"]', tr0).innerHTML = x.res; $('[data-c="r"]', tr0).innerHTML = x.r;
+  $('#jsum').innerHTML = jSummaryHtml();
+}
+var JCOLS = [['id', 'id'], ['date', 'date'], ['side', 'side'], ['entry', 'entry'], ['stop', 'stop'], ['target', 'target'], ['qty', 'qty_btc'], ['leverage', 'leverage'], ['exit', 'exit'], ['fees_used', 'fees_usdt'],
+  ['fees_est', 'fees_estimated'], ['funding', 'funding_usdt'], ['risk', 'planned_net_risk_usdt'], ['gross', 'gross_pnl_usdt'], ['net', 'net_pnl_usdt'], ['result', 'result'], ['r', 'r_multiple'], ['notes', 'notes']];
+function journalCsv() {
+  var rows = J.map(function (r) { var c = jCalc(r); return Object.assign({}, r, { fees_used: c.fees, fees_est: c.feesEst ? 'estimated' : 'actual', gross: c.closed ? c.gross : '', net: c.closed ? c.net : '', result: c.res, r: c.rm == null ? '' : c.rm }); });
+  return R.toCSV(rows, JCOLS.map(function (p) { return { key: p[0], label: p[1] }; }));
+}
+function planCsv() {
+  var p = planRun();
+  return R.toCSV(p.rows.map(function (r) { return Object.assign({}, r, { warn: (r.warnings || []).concat(r.errors || []).join(' ') }); }), [
+    ['i', 'trade'], ['day', 'day'], ['side', 'side'], ['outcome', 'outcome'], ['status', 'status'], ['entry', 'entry'], ['qty', 'qty_btc'], ['notional', 'notional_usdt'], ['margin', 'margin_usdt'],
+    ['risk', 'net_risk_usdt'], ['reward', 'net_reward_usdt'], ['gross', 'gross_pnl_usdt'], ['costs', 'costs_usdt'], ['pnl', 'net_pnl_usdt'], ['eqBefore', 'equity_before'], ['eqAfter', 'equity_after'], ['ddPeakPct', 'drawdown_pct'], ['warn', 'flags']
+  ].map(function (c) { return { key: c[0], label: c[1] }; }));
+}
+
+/* ---------- Settings ---------- */
+function renderSettings() {
+  var h = '<div class="card"><h2>' + T('h_validation') + '</h2><ul class="msgs">';
+  var bad = false, add = function (c, t) { bad = true; h += '<li class="' + c + '">' + T(t) + '</li>'; };
+  if (+S.leverage > +S.maxLeverage) add('err', 'v_lev');
+  if (!(+S.fxRate > 0)) add('err', 'v_fx');
+  if (!(+S.initialEquity > 0)) add('err', 'v_init');
+  if (+S.riskPct > 5) add('warn', 'v_risk');
+  if (+S.takerFeePct === 0 && +S.makerFeePct === 0) add('warn', 'v_fee0');
+  if (!bad) h += '<li class="ok">' + T('v_ok') + '</li>';
+  h += '</ul><p class="muted">' + T('note_assump') + '</p><p class="muted n">' + T('k_floor') + ': ' + usd(+S.initialEquity * (1 - S.maxDrawdownPct / 100)) + ' · FX: 1 USDT = ' + f(+S.fxRate, 2) + ' ' + unitLbl() + (S.fxStamp ? ' (' + esc(S.fxStamp) + ')' : '') + '</p></div>';
+  $('#o-st').innerHTML = h;
+}
+
+/* app3.js — events, sync, init */
+function applyShow() {
+  $$('[data-show]').forEach(function (el) { var p = el.dataset.show.split('='); el.hidden = String(S[p[0]]) !== p[1]; });
+}
+function syncInputs() {
+  $$('[data-k]').forEach(function (el) {
+    if (el === document.activeElement) return;
+    var v = S[el.dataset.k];
+    if (el.type === 'checkbox') el.checked = !!v; else el.value = v == null ? '' : v;
+  });
+  $$('[data-seg]').forEach(function (g) {
+    $$('button', g).forEach(function (b) { var on = String(S[g.dataset.seg]) === b.dataset.v; b.setAttribute('aria-pressed', String(on)); b.classList.toggle('on', on); });
+  });
+  var cl = $('[data-sp="capLocal"]');
+  if (cl && cl !== document.activeElement) { var v = +S.initialEquity * +S.fxRate; cl.value = isn(v) ? +v.toFixed(2) : ''; }
+}
+var RENDER = { overview: renderOverview, calc: renderCalc, planner: renderPlanner, sim: renderSim, analytics: renderAnalytics, journal: renderJournal, settings: renderSettings };
+function renderActive() {
+  TABS.forEach(function (t) {
+    $('#tab-' + t).hidden = t !== S.tab;
+    var b = $('#nt-' + t); b.setAttribute('aria-selected', String(t === S.tab)); b.setAttribute('tabindex', t === S.tab ? '0' : '-1'); b.classList.toggle('on', t === S.tab);
+  });
+  applyShow(); syncInputs(); RENDER[S.tab]();
+}
+function dl(name, text) {
+  var b = new Blob(['﻿' + text], { type: 'text/csv;charset=utf-8' }), a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+var ACTS = {
+  fillEven: function () { ensurePlan(); var o = R.evenOutcomes(PL.length, +S.winRatePct); PL.forEach(function (r, i) { r.outcome = o[i]; }); sv('PL', PL); renderPlanner(); },
+  fillRand: function () { ensurePlan(); var o = R.seededOutcomes(PL.length, +S.winRatePct, parseInt(S.seed, 10) || 1); PL.forEach(function (r, i) { r.outcome = o[i]; }); sv('PL', PL); renderPlanner(); },
+  clearPlan: function () { PL.forEach(function (r) { r.outcome = 'pending'; }); sv('PL', PL); renderPlanner(); },
+  resetSides: function () { PL.forEach(function (r, i) { r.side = R.sideFor(i, S.planSide); }); sv('PL', PL); renderPlanner(); },
+  exportPlan: function () { dl('trade-plan-' + todayStr() + '.csv', planCsv()); },
+  runSim: runSim,
+  addTrade: function () {
+    J.unshift({ id: uid(), date: todayStr(), side: 'long', entry: S.entryPrice, stop: '', target: '', qty: '', leverage: S.leverage, exit: '', fees: '', funding: '', risk: '', notes: '' });
+    sv('J', J); renderJournal();
+  },
+  saveCalc: function () {
+    var a = account(), pos = calcPos(a); if (!pos.ok) return;
+    var g = guardState(a);
+    if (!g.allowed && !confirm(T('guard_confirm') + '\n' + g.reasons.map(T).join('\n'))) return;
+    J.unshift({ id: uid(), date: todayStr(), side: pos.side, entry: pos.entry, stop: +pos.slPrice.toFixed(2), target: +pos.tpPrice.toFixed(2), qty: pos.qty, leverage: pos.leverage, exit: '', fees: '', funding: '', risk: +pos.netLoss.toFixed(4), notes: '' });
+    sv('J', J); toast(T('saved'));
+  },
+  exportJ: function () { dl('trade-journal-' + todayStr() + '.csv', journalCsv()); },
+  clearJ: function () { if (confirm(T('confirm_clear'))) { J = []; sv('J', J); renderJournal(); } },
+  resetDefaults: function () {
+    if (!confirm(T('confirm_reset'))) return;
+    S = Object.assign({}, D, UIDEF, { lang: S.lang, theme: S.theme, tab: S.tab }); PL = []; SIM = null; saveAll(); buildAll(); renderActive();
+  }
+};
+
+document.addEventListener('input', function (e) {
+  var el = e.target, d = el.dataset; if (!d) return;
+  if (d.k) {
+    var v;
+    if (el.type === 'checkbox') v = el.checked; else if (el.type === 'number' || d.num) v = el.value === '' ? '' : parseFloat(el.value); else v = el.value;
+    if (d.k === 'fxUnit' && v !== S.fxUnit && isn(+S.fxRate)) S.fxRate = v === 'rial' ? S.fxRate * 10 : S.fxRate / 10;
+    S[d.k] = v; sv('S', S);
+    if (d.k === 'fxUnit') buildAll();
+    renderActive(); return;
+  }
+  if (d.sp === 'capLocal') {
+    var L = parseFloat(el.value);
+    if (L > 0 && +S.initialEquity > 0) { S.fxRate = L / S.initialEquity; sv('S', S); var fx = $('[data-k="fxRate"]'); if (fx) fx.value = S.fxRate; renderSettings(); }
+  }
+});
+document.addEventListener('change', function (e) {
+  var el = e.target, d = el.dataset; if (!d) return;
+  if (d.j !== undefined) {
+    var r = J.filter(function (x) { return x.id === d.j; })[0]; if (!r) return;
+    r[d.f] = el.type === 'number' ? (el.value === '' ? '' : parseFloat(el.value)) : el.value;
+    sv('J', J); refreshJournalRow(d.j); return;
+  }
+  if (d.pl !== undefined) {
+    PL[+d.pl][d.f] = d.f === 'entry' ? (el.value === '' ? '' : parseFloat(el.value)) : el.value;
+    sv('PL', PL); renderPlanner();
+  }
+});
+document.addEventListener('click', function (e) {
+  var b = e.target.closest ? e.target.closest('button') : null; if (!b) return;
+  if (b.dataset.tab) { S.tab = b.dataset.tab; sv('S', S); renderActive(); return; }
+  if (b.parentElement && b.parentElement.dataset.seg && b.dataset.v) { S[b.parentElement.dataset.seg] = b.dataset.v; sv('S', S); renderActive(); return; }
+  if (b.dataset.del) { if (confirm(T('confirm_del'))) { J = J.filter(function (x) { return x.id !== b.dataset.del; }); sv('J', J); renderJournal(); } return; }
+  if (b.dataset.act && ACTS[b.dataset.act]) ACTS[b.dataset.act]();
+});
+document.addEventListener('keydown', function (e) {
+  var b = e.target.closest ? e.target.closest('#nav button') : null;
+  if (!b || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+  var rtl = document.documentElement.dir === 'rtl', step = (e.key === 'ArrowRight') === !rtl ? 1 : -1;
+  var i = (TABS.indexOf(S.tab) + step + TABS.length) % TABS.length;
+  S.tab = TABS[i]; sv('S', S); renderActive(); $('#nt-' + S.tab).focus();
+});
+document.addEventListener('pointermove', function (e) {
+  var c = e.target.closest ? e.target.closest('.chart[data-ch]') : null;
+  $$('.tipbox').forEach(function (t) { if (!c || t.parentNode !== c) t.hidden = true; });
+  if (!c) return;
+  var m = CH[c.dataset.ch]; if (!m || m.n < 1) return;
+  var svg = $('svg', c), rc = svg.getBoundingClientRect(), x = (e.clientX - rc.left) / rc.width * CW;
+  var i = Math.max(0, Math.min(m.n - 1, Math.round((x - CL) / (CW - CL - CR) * (m.n - 1))));
+  var tb = $('.tipbox', c); tb.hidden = false;
+  tb.innerHTML = '<b>' + m.xl + i + '</b>' + m.ser.map(function (s) { return '<div><i style="background:' + s.color + '"></i>' + esc(s.name) + ': ' + (isn(s.data[i]) ? m.fm(s.data[i]) : '—') + '</div>'; }).join('');
+  var px = CL + (m.n > 1 ? i / (m.n - 1) : 0) * (CW - CL - CR), cr = $('.cross', c);
+  cr.setAttribute('x1', px); cr.setAttribute('x2', px); cr.style.display = '';
+  tb.style.left = Math.max(4, Math.min(c.clientWidth - tb.offsetWidth - 4, e.clientX - c.getBoundingClientRect().left + 12)) + 'px';
+});
+$('#bLang').addEventListener('click', function () { S.lang = S.lang === 'fa' ? 'en' : 'fa'; sv('S', S); buildAll(); renderActive(); });
+$('#bTheme').addEventListener('click', function () { S.theme = S.theme === 'dark' ? 'light' : 'dark'; sv('S', S); buildAll(); renderActive(); });
+
+if (TABS.indexOf(S.tab) < 0) S.tab = 'overview';
+ensurePlan(); buildAll(); renderActive();
+})();</script>
+</body>
+</html>
